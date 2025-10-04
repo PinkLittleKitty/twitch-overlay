@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: transparent;
+            overflow: hidden;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, rgba(128, 0, 0, 0.1) 0%, transparent 70%);
+        }
+
+        .chat-container {
+            width: 380px;
+            height: 700px;
+            background: 
+                linear-gradient(180deg, 
+                    rgba(20, 20, 20, 0.98) 0%, 
+                    rgba(35, 35, 35, 0.95) 50%, 
+                    rgba(25, 25, 25, 0.98) 100%
+                ),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(255, 255, 255, 0.01) 3px,
+                    rgba(255, 255, 255, 0.01) 6px
+                );
+            border: 4px solid #000000;
+            border-radius: 25px;
+            box-shadow: 
+                0 0 40px rgba(0, 0, 0, 0.9),
+                inset 0 0 20px rgba(0, 0, 0, 0.8),
+                0 0 80px rgba(255, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes containerGlow {
+            0% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 60px rgba(255, 0, 0, 0.3); }
+            100% { box-shadow: 0 0 40px rgba(255, 0, 0, 1), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 80px rgba(255, 0, 0, 0.5); }
+        }
+
+        .chat-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff3333, #ff0000, #cc0000);
+            background-size: 200% 200%;
+            animation: borderPulse 4s ease-in-out infinite;
+            border-radius: 22px;
+            z-index: -1;
+        }
+
+        @keyframes borderPulse {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .chat-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 0, 0, 0.03) 2px,
+                    rgba(255, 0, 0, 0.03) 4px
+                );
+            pointer-events: none;
+            animation: scanlines 0.1s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(4px); }
+        }
+
+        .chat-header {
+            background: 
+                linear-gradient(180deg, 
+                    rgba(30, 30, 30, 0.98) 0%, 
+                    rgba(40, 40, 40, 0.95) 100%
+                );
+            padding: 15px 20px;
+            border-bottom: 4px solid #000000;
+            position: relative;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: 
+                linear-gradient(90deg, 
+                    rgba(100, 100, 100, 0.8) 0%, 
+                    rgba(150, 150, 150, 0.9) 50%, 
+                    rgba(100, 100, 100, 0.8) 100%
+                );
+            border-radius: 2px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes headerShine {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .app-title {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 
+                2px 2px 0px rgba(0, 0, 0, 0.8),
+                0 0 10px rgba(255, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .app-title::before {
+            content: '◆';
+            margin-right: 8px;
+            font-size: 14px;
+            color: #ff0000;
+        }
+
+        .app-title::after {
+            content: '◆';
+            margin-left: 8px;
+            font-size: 14px;
+            color: #ff0000;
+        }
+
+
+        @keyframes titlePulse {
+            0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.5); }
+            100% { text-shadow: 0 0 15px rgba(255, 255, 255, 1), 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.8); }
+        }
+
+        @keyframes iconRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chat-messages {
+            height: calc(100% - 85px);
+            overflow-y: auto;
+            padding: 20px 15px;
+            background: 
+                radial-gradient(ellipse at center, rgba(40, 40, 40, 0.3) 0%, rgba(20, 20, 20, 0.8) 100%),
+                repeating-linear-gradient(
+                    180deg,
+                    rgba(25, 25, 25, 0.95) 0px,
+                    rgba(30, 30, 30, 0.95) 2px,
+                    rgba(25, 25, 25, 0.95) 4px
+                );
+            position: relative;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .chat-messages::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="noise" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.02)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.01)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23noise)"/></svg>');
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            opacity: 0;
+            position: relative;
+            width: 100%;
+            animation: messageSlideIn 0.4s ease-out forwards;
+        }
+
+        /* Rectángulos MSM exactos de Persona 5 */
+        .message-bubble {
+            position: relative;
+            padding: 12px 18px;
+            background: #ffffff;
+            border: 3px solid #000000;
+            margin: 8px 0;
+            box-shadow: 
+                4px 4px 0px rgba(0, 0, 0, 1),
+                inset -1px -1px 0px rgba(0, 0, 0, 0.2);
+            clip-path: polygon(
+                12px 0%, 
+                100% 0%, 
+                100% calc(100% - 12px), 
+                calc(100% - 12px) 100%, 
+                0% 100%, 
+                0% 12px
+            );
+        }
+
+        /* Rectángulos rojos para mensajes especiales */
+        .message.special .message-bubble,
+        .message.moderator .message-bubble,
+        .message.vip .message-bubble {
+            background: #ff0000;
+        }
+
+        /* Sin rotación - layout limpio vertical como MSM */
+
+        .message-bubble:hover {
+            box-shadow: 
+                6px 6px 0px rgba(0, 0, 0, 1),
+                inset -1px -1px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Sin colas - MSM usa rectángulos simples */
+
+        @keyframes messageAppear {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px) scale(0.9);
+            }
+            60% {
+                transform: translateX(5px) scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes messageGlow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.6; transform: translateY(-50%) scale(1); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        }
+
+        .username {
+            color: #000000;
+            font-family: 'Orbitron', Arial Black, sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .username-badge {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #000000;
+            margin-right: 6px;
+            background: #666666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: white;
+            font-weight: bold;
+            clip-path: polygon(
+                4px 0%, 
+                100% 0%, 
+                100% calc(100% - 4px), 
+                calc(100% - 4px) 100%, 
+                0% 100%, 
+                0% 4px
+            );
+        }
+
+        .message-text {
+            color: #000000;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+            letter-spacing: 0.3px;
+        }
+
+        /* Texto blanco para burbujas rojas */
+        .message.special .message-text,
+        .message.moderator .message-text,
+        .message.vip .message-text {
+            color: #ffffff;
+        }
+
+        .message.special .username,
+        .message.moderator .username,
+        .message.vip .username {
+            color: #ffffff;
+        }
+
+        .subscriber .username-badge {
+            background: 
+                linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+        }
+
+        .moderator .username-badge {
+            background: 
+                linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+        }
+
+        .vip .username-badge {
+            background: 
+                linear-gradient(135deg, #ff69b4 0%, #cc4499 100%);
+        }
+
+        /* Burbujas rojas especiales para mods y VIPs */
+
+        .message.moderator .message-bubble,
+        .message.vip .message-bubble {
+            background: 
+                linear-gradient(135deg, 
+                    rgba(220, 0, 0, 0.98) 0%, 
+                    rgba(255, 0, 0, 0.95) 50%, 
+                    rgba(200, 0, 0, 0.98) 100%
+                );
+        }
+
+        .message.moderator .message-bubble::before,
+        .message.vip .message-bubble::before {
+            border-top-color: rgba(220, 0, 0, 0.98);
+        }
+
+        .message.moderator .message-text,
+        .message.vip .message-text,
+        .message.moderator .username,
+        .message.vip .username {
+            color: #ffffff;
+            text-shadow: 
+                1px 1px 0px rgba(0, 0, 0, 0.8),
+                2px 2px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes messageSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+
+        /* Layout de mensajes como teléfono */
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* Iconos dinámicos estilo Persona 5 */
+        .message-icon {
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: #000000;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            clip-path: polygon(
+                20% 0%, 80% 0%, 
+                100% 20%, 100% 80%, 
+                80% 100%, 20% 100%, 
+                0% 80%, 0% 20%
+            );
+            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
+            animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .question-icon {
+            background: linear-gradient(135deg, #ff6600, #ff9900);
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .exclamation-icon {
+            background: linear-gradient(135deg, #ff0000, #ff3333);
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
+                       exclamationPulse 1s ease-in-out infinite 0.5s;
+        }
+
+        .cool-message {
+            position: relative;
+        }
+
+        .cool-message::after {
+            content: '★';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-size: 20px;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            animation: starGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPop {
+            0% { transform: scale(0) rotate(180deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes exclamationPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes starGlow {
+            0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
+        }
+
+        /* Efectos adicionales de cyberpunk */
+        .cyber-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            animation: gridShift 10s linear infinite;
+        }
+
+        @keyframes gridShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(20px, 20px); }
+        }
+
+        .message-counter {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 10px;
+            color: rgba(255, 0, 0, 0.6);
+            font-weight: bold;
+        }
+
+        .typing-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-style: italic;
+            opacity: 0;
+            animation: typingFade 2s ease-in-out infinite;
+        }
+
+        @keyframes typingFade {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .chat-messages {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff0000, #cc0000);
+            box-shadow: 
+                0 0 15px rgba(255, 0, 0, 0.8),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+            animation: connectionPulse 2s infinite;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+
+        .connection-status::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            animation: ripple 2s infinite;
+        }
+
+        .connection-status.connected {
+            background: radial-gradient(circle, #00ff88, #00cc66);
+            box-shadow: 
+                0 0 15px rgba(0, 255, 136, 0.8),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .connection-status.connected::before {
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(1.1); 
+                opacity: 0.8; 
+            }
+        }
+
+        @keyframes ripple {
+            0% { 
+                transform: scale(1); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: scale(2); 
+                opacity: 0; 
+            }
+        }
+
+        .emote {
+            height: 20px;
+            width: auto;
+            vertical-align: middle;
+            margin: 0 2px;
+        }
+
+        /* Efectos adicionales para badges */
+        .badge {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="cyber-grid"></div>
+        <div class="chat-header">
+            <div class="app-title">MSM - Chat</div>
+            <div class="connection-status" id="connectionStatus"></div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Los mensajes aparecerán aquí -->
+            <div class="typing-indicator" id="typingIndicator">Someone is typing...</div>
+        </div>
+    </div>
+
+    <script>
+        class TwitchIRCClient {
+            constructor(channel) {
+                this.channel = channel.toLowerCase();
+                this.ws = null;
+                this.connected = false;
+                this.eventHandlers = {};
+            }
+
+            on(event, handler) {
+                if (!this.eventHandlers[event]) {
+                    this.eventHandlers[event] = [];
+                }
+                this.eventHandlers[event].push(handler);
+            }
+
+            emit(event, ...args) {
+                if (this.eventHandlers[event]) {
+                    this.eventHandlers[event].forEach(handler => handler(...args));
+                }
+            }
+
+            connect() {
+                return new Promise((resolve, reject) => {
+                    try {
+                        this.ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+                        
+                        this.ws.onopen = () => {
+                            console.log('Conectando a Twitch IRC...');
+                            this.ws.send('PASS SCHMOOPIIE');
+                            this.ws.send('NICK justinfan12345');
+                            this.ws.send(`JOIN #${this.channel}`);
+                        };
+
+                        this.ws.onmessage = (event) => {
+                            this.handleMessage(event.data);
+                        };
+
+                        this.ws.onclose = () => {
+                            this.connected = false;
+                            this.emit('disconnected');
+                            console.log('Desconectado del chat de Twitch');
+                        };
+
+                        this.ws.onerror = (error) => {
+                            console.error('Error de WebSocket:', error);
+                            reject(error);
+                        };
+
+                        this.on('connected', () => resolve());
+                        
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            handleMessage(data) {
+                const lines = data.trim().split('\n');
+                
+                lines.forEach(line => {
+                    if (line.startsWith('PING')) {
+                        this.ws.send('PONG :tmi.twitch.tv');
+                        return;
+                    }
+
+                    if (line.includes('Welcome, GLHF!')) {
+                        this.connected = true;
+                        this.emit('connected');
+                        return;
+                    }
+
+                    if (line.includes('PRIVMSG')) {
+                        this.parsePrivMsg(line);
+                    }
+                });
+            }
+
+            parsePrivMsg(line) {
+                try {
+                    const parts = line.split(' ');
+                    const userPart = parts[0].substring(1);
+                    const username = userPart.split('!')[0];
+                    
+                    const messageStart = line.indexOf(' :', line.indexOf('PRIVMSG')) + 2;
+                    const message = line.substring(messageStart);
+                    
+                    const tags = {
+                        'display-name': username,
+                        username: username.toLowerCase(),
+                        subscriber: false,
+                        mod: false,
+                        badges: null
+                    };
+
+                    this.emit('message', `#${this.channel}`, tags, message, false);
+                } catch (error) {
+                    console.error('Error parseando mensaje:', error);
+                }
+            }
+        }
+
+        class TwitchChatBox {
+            constructor() {
+                this.messages = [];
+                this.maxMessages = 50;
+                this.chatContainer = document.getElementById('chatMessages');
+                this.connectionStatus = document.getElementById('connectionStatus');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                this.messageCount = 0;
+                
+                this.channelName = 'JustNeki';
+                
+                this.playSound = (type) => {
+                    console.log(`🔊 Playing ${type} sound effect`);
+                };
+                
+                this.initTwitchChat();
+                this.initVisualEffects();
+            }
+
+            initVisualEffects() {
+                setInterval(() => {
+                    if (Math.random() < 0.3) {
+                        this.showTypingIndicator();
+                    }
+                }, 15000);
+
+                setInterval(() => {
+                    const header = document.querySelector('.chat-header');
+                    header.style.animation = 'none';
+                    setTimeout(() => {
+                        header.style.animation = '';
+                    }, 100);
+                }, 30000);
+            }
+
+            showTypingIndicator() {
+                this.typingIndicator.style.opacity = '0.7';
+                setTimeout(() => {
+                    this.typingIndicator.style.opacity = '0';
+                }, 3000);
+            }
+
+            initTwitchChat() {
+                console.log('Inicializando cliente IRC nativo...');
+                
+                this.client = new TwitchIRCClient(this.channelName);
+
+                this.client.on('message', (channel, tags, message, self) => {
+                    this.addMessage(tags, message);
+                });
+
+                this.client.on('connected', () => {
+                    this.connectionStatus.classList.add('connected');
+                    console.log('Conectado al chat de Twitch');
+                });
+
+                this.client.on('disconnected', () => {
+                    this.connectionStatus.classList.remove('connected');
+                    console.log('Desconectado del chat de Twitch');
+                });
+
+                this.client.connect().then(() => {
+                    console.log('Conectado exitosamente al canal:', this.channelName);
+                }).catch((error) => {
+                    console.error('Error al conectar:', error);
+                    this.addDemoMessages();
+                });
+
+                /*setTimeout(() => {
+                    this.addDemoMessages();
+                }, 3000);*/
+            }
+
+            addMessage(tags, message) {
+                this.messageCount++;
+                const messageElement = this.createMessageElement(tags, message);
+                
+                const specialKeywords = ['!', 'looking cool', 'for real', 'awesome', 'phantom', 'joker'];
+                const hasSpecialKeyword = specialKeywords.some(keyword => 
+                    message.toLowerCase().includes(keyword.toLowerCase())
+                );
+                
+                if (tags.mod || tags.vip || hasSpecialKeyword || this.messageCount % 7 === 0) {
+                    messageElement.classList.add('special');
+                }
+                
+                this.chatContainer.appendChild(messageElement);
+                
+                this.playSound(messageElement.classList.contains('special') ? 'special' : 'message');
+
+                this.messages.push(messageElement);
+                if (this.messages.length > this.maxMessages) {
+                    const oldMessage = this.messages.shift();
+                    oldMessage.style.transition = 'all 0.5s ease-out';
+                    oldMessage.style.transform = 'translateX(-100%) scale(0.6) rotate(-10deg)';
+                    oldMessage.style.opacity = '0';
+                    setTimeout(() => oldMessage.remove(), 500);
+                }
+
+                this.smoothScrollToBottom();
+            }
+
+            smoothScrollToBottom() {
+                const scrollHeight = this.chatContainer.scrollHeight;
+                const height = this.chatContainer.clientHeight;
+                const maxScrollTop = scrollHeight - height;
+                
+                const startScrollTop = this.chatContainer.scrollTop;
+                const distance = maxScrollTop - startScrollTop;
+                const duration = 500;
+                let start = null;
+                
+                const step = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    const easeInOut = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                    
+                    this.chatContainer.scrollTop = startScrollTop + (distance * easeInOut);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    }
+                };
+                
+                requestAnimationFrame(step);
+            }
+
+            createMessageElement(tags, message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+
+                if (tags.subscriber) messageDiv.classList.add('subscriber');
+                if (tags.mod) messageDiv.classList.add('moderator');
+                if (tags.badges && tags.badges.vip) messageDiv.classList.add('vip');
+
+                const usernameDiv = document.createElement('div');
+                usernameDiv.className = 'username';
+
+                const badgeDiv = document.createElement('div');
+                badgeDiv.className = 'username-badge';
+                
+                if (tags.subscriber) {
+                    badgeDiv.innerHTML = 'S';
+                } else if (tags.mod) {
+                    badgeDiv.innerHTML = 'M';
+                } else if (tags.badges && tags.badges.vip) {
+                    badgeDiv.innerHTML = 'V';
+                } else {
+                    badgeDiv.innerHTML = 'U';
+                }
+
+                const usernameTextSpan = document.createElement('span');
+                usernameTextSpan.textContent = tags['display-name'] || tags.username;
+
+                usernameDiv.appendChild(badgeDiv);
+                usernameDiv.appendChild(usernameTextSpan);
+
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+
+                const messageTextDiv = document.createElement('div');
+                messageTextDiv.className = 'message-text';
+                messageTextDiv.textContent = message;
+
+                if (message.includes('?')) {
+                    const questionIcon = document.createElement('div');
+                    questionIcon.className = 'message-icon question-icon';
+                    questionIcon.innerHTML = '?';
+                    bubbleDiv.appendChild(questionIcon);
+                }
+
+                if (message.includes('!')) {
+                    const exclamationIcon = document.createElement('div');
+                    exclamationIcon.className = 'message-icon exclamation-icon';
+                    exclamationIcon.innerHTML = '!';
+                    bubbleDiv.appendChild(exclamationIcon);
+                }
+
+                if (message.toLowerCase().includes('cool') || message.toLowerCase().includes('awesome')) {
+                    bubbleDiv.classList.add('cool-message');
+                }
+
+                bubbleDiv.appendChild(messageTextDiv);
+
+                messageDiv.appendChild(usernameDiv);
+                messageDiv.appendChild(bubbleDiv);
+
+                return messageDiv;
+            }
+
+            addDemoMessages() {
+                const demoMessages = [
+                    { username: 'PhantomThief', message: 'Looking cool, Joker! El chat está increíble 🎭', type: 'vip' },
+                    { username: 'MorganaP5', message: 'For real?! Este diseño es de otro nivel', type: 'mod' },
+                    { username: 'RyujiSakamoto', message: 'Effin\' awesome stream setup dude! 💀', type: 'subscriber' },
+                    { username: 'AnnTakamaki', message: 'El estilo MSM quedó perfecto ✨', type: 'subscriber' },
+                    { username: 'YusukeKitagawa', message: 'Such artistic beauty in this interface...', type: 'normal' },
+                    { username: 'MakotoNiijima', message: 'Excelente trabajo con el overlay 🌟', type: 'subscriber' },
+                    { username: 'FutabaSakura', message: 'Hacking into the chat! Nice UI design 💻', type: 'mod' },
+                    { username: 'HaruOkumura', message: 'This looks so professional! 🎨', type: 'normal' },
+                    { username: 'AkechiGoro', message: 'Impressive... very impressive indeed', type: 'vip' },
+                    { username: 'Kasumi', message: 'Senpai! The chat looks amazing! 💫', type: 'subscriber' }
+                ];
+
+                let delay = 2000;
+                demoMessages.forEach((demo, index) => {
+                    setTimeout(() => {
+                        const mockTags = {
+                            'display-name': demo.username,
+                            username: demo.username.toLowerCase(),
+                            subscriber: demo.type === 'subscriber',
+                            mod: demo.type === 'mod',
+                            badges: demo.type === 'vip' ? { vip: true } : null
+                        };
+                        this.addMessage(mockTags, demo.message);
+                        
+                        if (demo.username === 'PhantomThief' || demo.username === 'AkechiGoro') {
+                            this.triggerSpecialEffect();
+                        }
+                    }, delay + (index * 3000));
+                });
+            }
+
+            triggerSpecialEffect() {
+                const container = document.querySelector('.chat-container');
+                container.style.animation = 'none';
+                container.style.boxShadow = '0 0 50px rgba(255, 0, 0, 1), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 100px rgba(255, 0, 0, 0.8)';
+                
+                setTimeout(() => {
+                    container.style.animation = '';
+                    container.style.boxShadow = '';
+                }, 1000);
+            }
+        }
+
+        function setupOBSMode() {
+            document.body.style.background = 'transparent';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.search.includes('obs=true')) {
+                setupOBSMode();
+            }
+
+            console.log('Iniciando TwitchChatBox con cliente IRC nativo...');
+            new TwitchChatBox();
+        });
+
+        function changeChannel(newChannel) {
+            console.log(`Cambiando a canal: ${newChannel}`);
+        }
+    </script>
+</body>
+</html>
