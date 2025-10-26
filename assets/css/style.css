@@ -1,0 +1,46 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* Define the theme variables for easy reuse */
+:root {
+    --bg-cream: #f5f1e8;
+    --text-brown: #8b7355;
+    --border-tan: #d4c4a8;
+    --accent-green: #a8c686;
+    --accent-blue: #6b8db5;
+    --bg-blue-light: #e8f4fd;
+    --font-primary: 'Inter', 'Arial', sans-serif;
+    --wood-texture: url('../images/wood_texture.png'); /* We'll need to find a nice wood texture! */
+}
+
+/* Basic body setup for all overlay components */
+body {
+    font-family: var(--font-primary);
+    background: transparent;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.webcam-frame {
+    width: 1280px; /* Set to your webcam's base resolution */
+    height: 720px;
+    background: transparent;
+    border: 25px solid transparent;
+    border-image: var(--wood-texture) 30 stretch; /* Creates a wood-grain border */
+    border-radius: 40px; /* Nice rounded corners */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+/* A little leaf icon in the corner, just like the furniture! */
+.webcam-frame .frame-icon {
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--accent-green);
+    -webkit-mask: url('assets/images/leaf.svg') no-repeat center;
+    mask: url('assets/images/leaf.svg') no-repeat center;
+}

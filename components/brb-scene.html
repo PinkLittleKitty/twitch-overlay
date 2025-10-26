@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulbasaur Rapa Bolas - BRB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg,
+                    #2E5266 0%,
+                    /* Deep teal */
+                    #8BC34A 25%,
+                    /* Light green */
+                    #CDDC39 50%,
+                    /* Lime */
+                    #9CCC65 75%,
+                    /* Light green */
+                    #66BB6A 100%
+                    /* Medium green */
+                );
+            position: relative;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255, 235, 59, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 195, 74, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.1) 0%, transparent 60%);
+            animation: leafShimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes leafShimmer {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .main-container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .brb-title {
+            font-size: 120px;
+            font-weight: 800;
+            color: #2E7D32;
+            text-shadow:
+                4px 4px 0px #1B5E20,
+                8px 8px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            animation: titleBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes titleBounce {
+
+            0%,
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-10px) scale(1.05);
+            }
+        }
+
+        .subtitle {
+            font-size: 48px;
+            font-weight: 600;
+            color: #388E3C;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+            animation: subtitleGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes subtitleGlow {
+
+            0%,
+            100% {
+                color: #388E3C;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                color: #4CAF50;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), 0 0 20px rgba(76, 175, 80, 0.5);
+            }
+        }
+
+        .bulbasaur-container {
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .bulbasaur {
+            font-size: 200px;
+            animation: bulbasaurBounce 2s ease-in-out infinite;
+            display: inline-block;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes bulbasaurBounce {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(2deg);
+            }
+        }
+
+        .explanation {
+            font-size: 32px;
+            font-weight: 500;
+            color: #2E7D32;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            animation: explanationFade 6s ease-in-out infinite;
+        }
+
+        @keyframes explanationFade {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .floating-leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .leaf {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.6;
+            animation: leafFloat linear infinite;
+        }
+
+        @keyframes leafFloat {
+            0% {
+                transform: translateY(100vh) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-100px) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .pokeball-decoration {
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.3;
+            animation: pokeballSpin 10s linear infinite;
+        }
+
+        @keyframes pokeballSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .pokeball-1 {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .pokeball-2 {
+            top: 20%;
+            right: 15%;
+            animation-delay: -3s;
+        }
+
+        .pokeball-3 {
+            bottom: 15%;
+            left: 20%;
+            animation-delay: -6s;
+        }
+
+        .pokeball-4 {
+            bottom: 25%;
+            right: 10%;
+            animation-delay: -9s;
+        }
+
+        .grass-decoration {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(76, 175, 80, 0.3) 50%,
+                    rgba(46, 125, 50, 0.6) 100%);
+            pointer-events: none;
+        }
+
+        .grass-blades {
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+        }
+
+        .grass-blade {
+            position: absolute;
+            font-size: 30px;
+            color: #2E7D32;
+            animation: grassSway 4s ease-in-out infinite;
+        }
+
+        @keyframes grassSway {
+
+            0%,
+            100% {
+                transform: rotate(-5deg);
+            }
+
+            50% {
+                transform: rotate(5deg);
+            }
+        }
+
+        .blade-1 {
+            left: 5%;
+            bottom: 20px;
+            animation-delay: 0s;
+        }
+
+        .blade-2 {
+            left: 15%;
+            bottom: 30px;
+            animation-delay: 0.5s;
+        }
+
+        .blade-3 {
+            left: 25%;
+            bottom: 15px;
+            animation-delay: 1s;
+        }
+
+        .blade-4 {
+            left: 35%;
+            bottom: 25px;
+            animation-delay: 1.5s;
+        }
+
+        .blade-5 {
+            left: 45%;
+            bottom: 20px;
+            animation-delay: 2s;
+        }
+
+        .blade-6 {
+            left: 55%;
+            bottom: 30px;
+            animation-delay: 2.5s;
+        }
+
+        .blade-7 {
+            left: 65%;
+            bottom: 15px;
+            animation-delay: 3s;
+        }
+
+        .blade-8 {
+            left: 75%;
+            bottom: 25px;
+            animation-delay: 3.5s;
+        }
+
+        .blade-9 {
+            left: 85%;
+            bottom: 20px;
+            animation-delay: 0.2s;
+        }
+
+        .blade-10 {
+            left: 95%;
+            bottom: 30px;
+            animation-delay: 0.7s;
+        }
+
+        .return-message {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: 500;
+            color: #1B5E20;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            animation: returnPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes returnPulse {
+
+            0%,
+            100% {
+                opacity: 0.8;
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-leaves" id="floatingLeaves"></div>
+
+    <div class="pokeball-decoration pokeball-1">⚪</div>
+    <div class="pokeball-decoration pokeball-2">🔴</div>
+    <div class="pokeball-decoration pokeball-3">⚪</div>
+    <div class="pokeball-decoration pokeball-4">🔴</div>
+
+    <div class="main-container">
+        <div class="brb-title">BRB</div>
+        <div class="subtitle">Bulbasaur Rapa Bolas</div>
+
+        <div class="bulbasaur-container">
+            <div class="bulbasaur">🌱</div>
+        </div>
+
+        <div class="explanation">
+            El Bulbasaur está ocupado rapando bolas...
+        </div>
+    </div>
+
+    <div class="grass-decoration"></div>
+    <div class="grass-blades">
+        <div class="grass-blade blade-1">🌿</div>
+        <div class="grass-blade blade-2">🌱</div>
+        <div class="grass-blade blade-3">🌿</div>
+        <div class="grass-blade blade-4">🌱</div>
+        <div class="grass-blade blade-5">🌿</div>
+        <div class="grass-blade blade-6">🌱</div>
+        <div class="grass-blade blade-7">🌿</div>
+        <div class="grass-blade blade-8">🌱</div>
+        <div class="grass-blade blade-9">🌿</div>
+        <div class="grass-blade blade-10">🌱</div>
+    </div>
+
+
+    <script>
+        class BRBScene {
+            constructor() {
+                this.leaves = [];
+                this.leafEmojis = ['🍃', '🌿', '🌱', '🍀'];
+                this.init();
+            }
+
+            init() {
+                this.createFloatingLeaves();
+                this.startAnimationLoop();
+                this.addRandomEffects();
+            }
+
+            createFloatingLeaves() {
+                const leavesContainer = document.getElementById('floatingLeaves');
+
+                for (let i = 0; i < 12; i++) {
+                    const leaf = document.createElement('div');
+                    leaf.className = 'leaf';
+                    leaf.textContent = this.leafEmojis[Math.floor(Math.random() * this.leafEmojis.length)];
+
+                    leaf.style.left = Math.random() * 100 + '%';
+                    leaf.style.animationDuration = (Math.random() * 8 + 12) + 's';
+                    leaf.style.animationDelay = Math.random() * 10 + 's';
+
+                    leavesContainer.appendChild(leaf);
+                    this.leaves.push(leaf);
+                }
+            }
+
+            startAnimationLoop() {
+                setInterval(() => {
+                    this.refreshLeaves();
+                }, 60000);
+            }
+
+            refreshLeaves() {
+                this.leaves.forEach(leaf => {
+                    leaf.textContent = this.leafEmojis[Math.floor(Math.random() * this.leafEmojis.length)];
+                    leaf.style.animationDelay = Math.random() * 10 + 's';
+                });
+            }
+
+            addRandomEffects() {
+                setInterval(() => {
+                    if (Math.random() < 0.4) {
+                        this.addExtraLeaf();
+                    }
+                }, 5000);
+            }
+
+            addExtraLeaf() {
+                const leavesContainer = document.getElementById('floatingLeaves');
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.textContent = this.leafEmojis[Math.floor(Math.random() * this.leafEmojis.length)];
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                leaf.style.fontSize = (Math.random() * 20 + 30) + 'px';
+
+                leavesContainer.appendChild(leaf);
+
+                setTimeout(() => {
+                    leaf.remove();
+                }, 13000);
+            }
+
+            changeBulbasaurMessage() {
+                const explanation = document.querySelector('.explanation');
+                const messages = [
+                    'El Bulbasaur está ocupado rapando bolas...',
+                    'Bulbasaur necesita un descanso de rapar bolas',
+                    'Momento de relajación para el Bulbasaur',
+                    'El Bulbasaur volverá después de rapar más bolas'
+                ];
+
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                explanation.textContent = randomMessage;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.brbScene = new BRBScene();
+        });
+
+        setInterval(() => {
+            if (window.brbScene) {
+                window.brbScene.changeBulbasaurMessage();
+            }
+        }, 15000);
+
+        window.addLeafBurst = function () {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    if (window.brbScene) {
+                        window.brbScene.addExtraLeaf();
+                    }
+                }, i * 200);
+            }
+        };
+
+        window.setBRBMessage = function (message) {
+            const explanation = document.querySelector('.explanation');
+            if (explanation) {
+                explanation.textContent = message;
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const bulbasaur = document.querySelector('.bulbasaur');
+            if (bulbasaur) {
+                bulbasaur.addEventListener('click', () => {
+                    addLeafBurst();
+                });
+                bulbasaur.style.cursor = 'pointer';
+            }
+        });
+    </script>
+</body>
+
+</html>

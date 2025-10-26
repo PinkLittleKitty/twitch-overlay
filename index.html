@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHAT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,483 +13,287 @@
         }
 
         body {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Inter', 'Arial', sans-serif;
             background: transparent;
             overflow: hidden;
             height: 100vh;
-            background: radial-gradient(ellipse at center, rgba(128, 0, 0, 0.1) 0%, transparent 70%);
         }
 
         .chat-container {
             width: 380px;
             height: 700px;
-            background: 
-                linear-gradient(180deg, 
-                    rgba(20, 20, 20, 0.98) 0%, 
-                    rgba(35, 35, 35, 0.95) 50%, 
-                    rgba(25, 25, 25, 0.98) 100%
-                ),
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 3px,
-                    rgba(255, 255, 255, 0.01) 3px,
-                    rgba(255, 255, 255, 0.01) 6px
-                );
-            border: 4px solid #000000;
-            border-radius: 25px;
-            box-shadow: 
-                0 0 40px rgba(0, 0, 0, 0.9),
-                inset 0 0 20px rgba(0, 0, 0, 0.8),
-                0 0 80px rgba(255, 0, 0, 0.2);
+            background: #f5f1e8;
+            border: none;
+            border-radius: 60px;
             position: relative;
             overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
         }
 
-        @keyframes containerGlow {
-            0% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 60px rgba(255, 0, 0, 0.3); }
-            100% { box-shadow: 0 0 40px rgba(255, 0, 0, 1), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 80px rgba(255, 0, 0, 0.5); }
-        }
-
+        /* Status bar area */
         .chat-container::before {
-            content: '';
+            content: '••• 2:51 AM ⚙';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #ff0000, #ff3333, #ff0000, #cc0000);
-            background-size: 200% 200%;
-            animation: borderPulse 4s ease-in-out infinite;
-            border-radius: 22px;
-            z-index: -1;
-        }
-
-        @keyframes borderPulse {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .chat-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
+            top: 20px;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(255, 0, 0, 0.03) 2px,
-                    rgba(255, 0, 0, 0.03) 4px
-                );
-            pointer-events: none;
-            animation: scanlines 0.1s linear infinite;
+            text-align: center;
+            font-size: 12px;
+            color: #8b7355;
+            font-weight: 500;
+            z-index: 10;
         }
 
-        @keyframes scanlines {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(4px); }
-        }
+
 
         .chat-header {
-            background: 
-                linear-gradient(180deg, 
-                    rgba(30, 30, 30, 0.98) 0%, 
-                    rgba(40, 40, 40, 0.95) 100%
-                );
-            padding: 15px 20px;
-            border-bottom: 4px solid #000000;
+            background: transparent;
+            padding: 50px 20px 20px 20px;
+            border-bottom: none;
             position: relative;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .chat-header::before {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: 
-                linear-gradient(90deg, 
-                    rgba(100, 100, 100, 0.8) 0%, 
-                    rgba(150, 150, 150, 0.9) 50%, 
-                    rgba(100, 100, 100, 0.8) 100%
-                );
-            border-radius: 2px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        @keyframes headerShine {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+            border-radius: 60px 60px 0 0;
         }
 
         .app-title {
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 
-                2px 2px 0px rgba(0, 0, 0, 0.8),
-                0 0 10px rgba(255, 0, 0, 0.5);
+            color: #8b7355;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
             position: relative;
             z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 5px;
+            margin-bottom: 20px;
         }
 
-        .app-title::before {
-            content: '◆';
-            margin-right: 8px;
-            font-size: 14px;
-            color: #ff0000;
-        }
-
-        .app-title::after {
-            content: '◆';
-            margin-left: 8px;
-            font-size: 14px;
-            color: #ff0000;
-        }
-
-
-        @keyframes titlePulse {
-            0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.5); }
-            100% { text-shadow: 0 0 15px rgba(255, 255, 255, 1), 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.8); }
-        }
-
-        @keyframes iconRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
 
         .chat-messages {
-            height: calc(100% - 85px);
+            height: calc(100% - 120px);
             overflow-y: auto;
-            padding: 20px 15px;
-            background: 
-                radial-gradient(ellipse at center, rgba(40, 40, 40, 0.3) 0%, rgba(20, 20, 20, 0.8) 100%),
-                repeating-linear-gradient(
-                    180deg,
-                    rgba(25, 25, 25, 0.95) 0px,
-                    rgba(30, 30, 30, 0.95) 2px,
-                    rgba(25, 25, 25, 0.95) 4px
-                );
+            padding: 0 20px 20px 20px;
+            background: transparent;
             position: relative;
-            border-radius: 0 0 20px 20px;
-        }
-
-        .chat-messages::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="noise" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.02)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.01)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23noise)"/></svg>');
-            pointer-events: none;
-            opacity: 0.4;
+            border-radius: 0 0 60px 60px;
         }
 
         .message {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            margin-top: 25px;
             opacity: 0;
             position: relative;
             width: 100%;
-            animation: messageSlideIn 0.4s ease-out forwards;
+            animation: messageBounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            transform: none;
         }
 
-        /* Rectángulos MSM exactos de Persona 5 */
+        /* Subtle variations for cloud bumps */
+        .message:nth-child(3n) .message-bubble::before {
+            left: 22px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .message:nth-child(4n) .message-bubble::after {
+            left: 28px;
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Animal Crossing cloud-shaped text bubbles */
         .message-bubble {
             position: relative;
-            padding: 12px 18px;
+            padding: 16px 20px;
             background: #ffffff;
-            border: 3px solid #000000;
-            margin: 8px 0;
+            border: 2px solid #d4c4a8;
+            margin: 12px 0;
+            max-width: 85%;
+            border-radius: 25px;
             box-shadow: 
-                4px 4px 0px rgba(0, 0, 0, 1),
-                inset -1px -1px 0px rgba(0, 0, 0, 0.2);
-            clip-path: polygon(
-                12px 0%, 
-                100% 0%, 
-                100% calc(100% - 12px), 
-                calc(100% - 12px) 100%, 
-                0% 100%, 
-                0% 12px
-            );
+                0 3px 8px rgba(139, 115, 85, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            overflow: visible;
         }
 
-        /* Rectángulos rojos para mensajes especiales */
+        /* Main cloud bumps */
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 18px;
+            width: 16px;
+            height: 16px;
+            background: #ffffff;
+            border: 2px solid #d4c4a8;
+            border-radius: 50%;
+            border-bottom: none;
+            z-index: 2;
+        }
+
+        .message-bubble::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 32px;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border: 2px solid #d4c4a8;
+            border-radius: 50%;
+            border-bottom: none;
+            z-index: 2;
+        }
+
+        /* Special cloud bubbles with different colors */
         .message.special .message-bubble,
         .message.moderator .message-bubble,
         .message.vip .message-bubble {
-            background: #ff0000;
+            background: #e8f4fd;
+            border-color: #b8d4ea;
+            box-shadow: 
+                0 3px 8px rgba(184, 212, 234, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
-        /* Sin rotación - layout limpio vertical como MSM */
+        .message.special .message-bubble::before,
+        .message.moderator .message-bubble::before,
+        .message.vip .message-bubble::before {
+            background: #e8f4fd;
+            border-color: #b8d4ea;
+        }
+
+        .message.special .message-bubble::after,
+        .message.moderator .message-bubble::after,
+        .message.vip .message-bubble::after {
+            background: #e8f4fd;
+            border-color: #b8d4ea;
+        }
 
         .message-bubble:hover {
+            transform: translateY(-2px) scale(1.02);
             box-shadow: 
-                6px 6px 0px rgba(0, 0, 0, 1),
-                inset -1px -1px 0px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Sin colas - MSM usa rectángulos simples */
-
-        @keyframes messageAppear {
-            0% {
-                opacity: 0;
-                transform: translateX(-30px) scale(0.9);
-            }
-            60% {
-                transform: translateX(5px) scale(1.05);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-        }
-
-        @keyframes messageGlow {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.7; }
-        }
-
-        @keyframes arrowPulse {
-            0%, 100% { opacity: 0.6; transform: translateY(-50%) scale(1); }
-            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+                0 5px 15px rgba(139, 115, 85, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
         }
 
         .username {
-            color: #000000;
-            font-family: 'Orbitron', Arial Black, sans-serif;
-            font-weight: 800;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #8b7355;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
             margin-bottom: 4px;
             display: flex;
             align-items: center;
+            text-transform: none;
+            letter-spacing: 0;
         }
 
         .username-badge {
             width: 18px;
             height: 18px;
-            border: 2px solid #000000;
-            margin-right: 6px;
-            background: #666666;
+            border: none;
+            margin-right: 8px;
+            background: #a8c686;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 9px;
-            color: white;
+            color: #ffffff;
             font-weight: bold;
-            clip-path: polygon(
-                4px 0%, 
-                100% 0%, 
-                100% calc(100% - 4px), 
-                calc(100% - 4px) 100%, 
-                0% 100%, 
-                0% 4px
-            );
+            position: relative;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+            box-shadow: 
+                0 2px 4px rgba(168, 198, 134, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         .message-text {
-            color: #000000;
-            font-family: 'Orbitron', Arial, sans-serif;
+            color: #8b7355;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
-            font-weight: 600;
-            line-height: 1.3;
-            letter-spacing: 0.3px;
+            font-weight: 500;
+            line-height: 1.4;
         }
 
-        /* Texto blanco para burbujas rojas */
+        /* Text for special bubbles */
         .message.special .message-text,
         .message.moderator .message-text,
         .message.vip .message-text {
-            color: #ffffff;
+            color: #6b8db5;
+            font-weight: 500;
         }
 
         .message.special .username,
         .message.moderator .username,
         .message.vip .username {
-            color: #ffffff;
+            color: #6b8db5;
+        }
+
+        /* Timestamp styling */
+        .message-timestamp {
+            position: absolute;
+            top: -22px;
+            right: 8px;
+            background: #d4c4a8;
+            color: #8b7355;
+            padding: 4px 8px;
+            font-size: 9px;
+            font-weight: 500;
+            border-radius: 10px;
+            box-shadow: 
+                0 2px 4px rgba(212, 196, 168, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            z-index: 10;
+            white-space: nowrap;
         }
 
         .subscriber .username-badge {
-            background: 
-                linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            background: #f4d03f;
+            color: #8b7355;
         }
 
         .moderator .username-badge {
-            background: 
-                linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            background: #58d68d;
+            color: #ffffff;
         }
 
         .vip .username-badge {
-            background: 
-                linear-gradient(135deg, #ff69b4 0%, #cc4499 100%);
-        }
-
-        /* Burbujas rojas especiales para mods y VIPs */
-
-        .message.moderator .message-bubble,
-        .message.vip .message-bubble {
-            background: 
-                linear-gradient(135deg, 
-                    rgba(220, 0, 0, 0.98) 0%, 
-                    rgba(255, 0, 0, 0.95) 50%, 
-                    rgba(200, 0, 0, 0.98) 100%
-                );
-        }
-
-        .message.moderator .message-bubble::before,
-        .message.vip .message-bubble::before {
-            border-top-color: rgba(220, 0, 0, 0.98);
-        }
-
-        .message.moderator .message-text,
-        .message.vip .message-text,
-        .message.moderator .username,
-        .message.vip .username {
+            background: #ec7063;
             color: #ffffff;
-            text-shadow: 
-                1px 1px 0px rgba(0, 0, 0, 0.8),
-                2px 2px 0px rgba(0, 0, 0, 0.4);
         }
 
-        @keyframes messageSlideIn {
+        @keyframes messageBounceIn {
             0% {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(20px) scale(0.8);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-5px) scale(1.05);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
-
-
-        /* Layout de mensajes como teléfono */
+        /* Phone-like message layout */
         .chat-messages {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
-        /* Iconos dinámicos estilo Persona 5 */
-        .message-icon {
-            position: absolute;
-            top: -15px;
-            right: -10px;
-            width: 30px;
-            height: 30px;
-            background: #000000;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 900;
-            clip-path: polygon(
-                20% 0%, 80% 0%, 
-                100% 20%, 100% 80%, 
-                80% 100%, 20% 100%, 
-                0% 80%, 0% 20%
-            );
-            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
-            animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
 
-        .question-icon {
-            background: linear-gradient(135deg, #ff6600, #ff9900);
-            color: #ffffff;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-        }
-
-        .exclamation-icon {
-            background: linear-gradient(135deg, #ff0000, #ff3333);
-            color: #ffffff;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
-                       exclamationPulse 1s ease-in-out infinite 0.5s;
-        }
-
-        .cool-message {
-            position: relative;
-        }
-
-        .cool-message::after {
-            content: '★';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            font-size: 20px;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            animation: starGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes iconPop {
-            0% { transform: scale(0) rotate(180deg); opacity: 0; }
-            50% { transform: scale(1.2) rotate(10deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        @keyframes exclamationPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes starGlow {
-            0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
-            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
-        }
-
-        /* Efectos adicionales de cyberpunk */
-        .cyber-grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(rgba(255, 0, 0, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
-            pointer-events: none;
-            animation: gridShift 10s linear infinite;
-        }
-
-        @keyframes gridShift {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(20px, 20px); }
-        }
-
-        .message-counter {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 10px;
-            color: rgba(255, 0, 0, 0.6);
-            font-weight: bold;
-        }
 
         .typing-indicator {
             position: absolute;
-            bottom: 10px;
-            left: 20px;
-            color: rgba(255, 255, 255, 0.5);
+            bottom: 15px;
+            left: 25px;
+            color: #a8c686;
             font-size: 11px;
             font-style: italic;
             opacity: 0;
@@ -513,65 +317,23 @@
 
         .connection-status {
             position: absolute;
-            top: 15px;
-            right: 20px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #ff0000, #cc0000);
-            box-shadow: 
-                0 0 15px rgba(255, 0, 0, 0.8),
-                inset 0 2px 4px rgba(255, 255, 255, 0.3),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.5);
-            animation: connectionPulse 2s infinite;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            top: 25px;
+            right: 30px;
+            width: 8px;
+            height: 8px;
+            background: #ec7063;
             z-index: 10;
-        }
-
-        .connection-status::before {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            border: 2px solid rgba(255, 0, 0, 0.3);
             border-radius: 50%;
-            animation: ripple 2s infinite;
+            box-shadow: 
+                0 2px 4px rgba(236, 112, 99, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         .connection-status.connected {
-            background: radial-gradient(circle, #00ff88, #00cc66);
+            background: #58d68d;
             box-shadow: 
-                0 0 15px rgba(0, 255, 136, 0.8),
-                inset 0 2px 4px rgba(255, 255, 255, 0.3),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .connection-status.connected::before {
-            border-color: rgba(0, 255, 136, 0.3);
-        }
-
-        @keyframes connectionPulse {
-            0%, 100% { 
-                transform: scale(1); 
-                opacity: 1; 
-            }
-            50% { 
-                transform: scale(1.1); 
-                opacity: 0.8; 
-            }
-        }
-
-        @keyframes ripple {
-            0% { 
-                transform: scale(1); 
-                opacity: 1; 
-            }
-            100% { 
-                transform: scale(2); 
-                opacity: 0; 
-            }
+                0 2px 4px rgba(88, 214, 141, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
         .emote {
@@ -594,14 +356,11 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="cyber-grid"></div>
         <div class="chat-header">
-            <div class="app-title">MSM - Chat</div>
+            <div class="app-title">Nookófono</div>
             <div class="connection-status" id="connectionStatus"></div>
         </div>
         <div class="chat-messages" id="chatMessages">
-            <!-- Los mensajes aparecerán aquí -->
-            <div class="typing-indicator" id="typingIndicator">Someone is typing...</div>
         </div>
     </div>
 
@@ -855,7 +614,7 @@
                 } else if (tags.badges && tags.badges.vip) {
                     badgeDiv.innerHTML = 'V';
                 } else {
-                    badgeDiv.innerHTML = 'U';
+                    badgeDiv.innerHTML = '●';
                 }
 
                 const usernameTextSpan = document.createElement('span');
@@ -866,6 +625,17 @@
 
                 const bubbleDiv = document.createElement('div');
                 bubbleDiv.className = 'message-bubble';
+
+                // Add timestamp
+                const timestampDiv = document.createElement('div');
+                timestampDiv.className = 'message-timestamp';
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                timestampDiv.textContent = timeString;
 
                 const messageTextDiv = document.createElement('div');
                 messageTextDiv.className = 'message-text';
@@ -889,9 +659,10 @@
                     bubbleDiv.classList.add('cool-message');
                 }
 
+                bubbleDiv.appendChild(usernameDiv);
                 bubbleDiv.appendChild(messageTextDiv);
+                bubbleDiv.appendChild(timestampDiv);
 
-                messageDiv.appendChild(usernameDiv);
                 messageDiv.appendChild(bubbleDiv);
 
                 return messageDiv;

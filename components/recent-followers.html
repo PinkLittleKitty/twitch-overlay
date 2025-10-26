@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad Reciente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: transparent;
+            overflow: hidden;
+            width: 600px;
+            height: 120px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .activity-container {
+            width: 600px;
+            height: 120px;
+            background: #f5f1e8;
+            border-radius: 20px;
+            position: relative;
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.15),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+            padding: 12px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .activity-icon {
+            width: 18px;
+            height: 18px;
+            background: #a8c686;
+            border-radius: 50% 0 50% 50%;
+            margin-right: 8px;
+            position: relative;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .activity-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 1px;
+        }
+
+        .title {
+            color: #8b7355;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .activity-grid {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            height: 76px;
+        }
+
+        .activity-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1px solid #d4c4a8;
+            box-shadow: 0 2px 5px rgba(139, 115, 85, 0.1);
+            animation: slideInRight 0.5s ease-out;
+            flex: 1;
+            text-align: center;
+        }
+
+        .activity-type {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .type-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .follower-icon {
+            background: #a8c686;
+        }
+
+        .subscriber-icon {
+            background: #ff6b6b;
+        }
+
+        .bits-icon {
+            background: #4ecdc4;
+        }
+
+        .type-label {
+            color: #8b7355;
+            font-size: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .activity-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .username {
+            color: #8b7355;
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 110px;
+        }
+
+        .activity-details {
+            color: #a8c686;
+            font-size: 7px;
+            font-weight: 400;
+            margin-bottom: 1px;
+        }
+
+        .timestamp {
+            color: #a8c686;
+            font-size: 7px;
+            font-weight: 400;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .new-activity {
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: #e8f4fd !important;
+            border-color: #b8d4ea !important;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3) rotate(-2deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05) rotate(1deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            color: #a8c686;
+            font-size: 11px;
+            font-style: italic;
+            text-align: center;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="activity-container">
+        <div class="header">
+            <div class="activity-icon"></div>
+            <div class="title">Actividad Reciente</div>
+        </div>
+        <div class="activity-grid" id="activityGrid">
+            <div class="activity-row" id="followerRow">
+                <div class="activity-type">
+                    <div class="type-icon follower-icon">F</div>
+                    <div class="type-label">Seguidor</div>
+                </div>
+                <div class="activity-info">
+                    <div class="username" id="latestFollower">-</div>
+                    <div class="activity-details">Último</div>
+                </div>
+            </div>
+
+            <div class="activity-row" id="subscriberRow">
+                <div class="activity-type">
+                    <div class="type-icon subscriber-icon">S</div>
+                    <div class="type-label">Sub</div>
+                </div>
+                <div class="activity-info">
+                    <div class="username" id="latestSubscriber">-</div>
+                    <div class="activity-details">Último</div>
+                </div>
+            </div>
+
+            <div class="activity-row" id="bitsRow">
+                <div class="activity-type">
+                    <div class="type-icon bits-icon">B</div>
+                    <div class="type-label">Bits</div>
+                </div>
+                <div class="activity-info">
+                    <div class="username" id="latestBits">-</div>
+                    <div class="activity-details" id="bitsAmount">Último</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TwitchRecentActivity {
+            constructor() {
+                this.latestFollower = null;
+                this.latestSubscriber = null;
+                this.latestBits = null;
+                this.twitchClient = null;
+
+                this.elements = {
+                    follower: document.getElementById('latestFollower'),
+                    followerRow: document.getElementById('followerRow'),
+                    subscriber: document.getElementById('latestSubscriber'),
+                    subscriberRow: document.getElementById('subscriberRow'),
+                    bits: document.getElementById('latestBits'),
+                    bitsAmount: document.getElementById('bitsAmount'),
+                    bitsRow: document.getElementById('bitsRow')
+                };
+
+                this.initializeTwitchIntegration();
+            }
+
+            addFollower(username) {
+                this.latestFollower = { username, timestamp: new Date() };
+                this.updateFollowerDisplay();
+                this.animateRow('followerRow');
+            }
+
+            addSubscriber(username, tier = 1) {
+                this.latestSubscriber = { username, tier, timestamp: new Date() };
+                this.updateSubscriberDisplay();
+                this.animateRow('subscriberRow');
+            }
+
+            addBits(username, amount) {
+                this.latestBits = { username, amount, timestamp: new Date() };
+                this.updateBitsDisplay();
+                this.animateRow('bitsRow');
+            }
+
+            updateFollowerDisplay() {
+                if (this.latestFollower) {
+                    this.elements.follower.textContent = this.latestFollower.username;
+                    this.elements.followerTime.textContent = this.formatTime(this.latestFollower.timestamp);
+                }
+            }
+
+            updateSubscriberDisplay() {
+                if (this.latestSubscriber) {
+                    this.elements.subscriber.textContent = this.latestSubscriber.username;
+                    this.elements.subscriberTime.textContent = this.formatTime(this.latestSubscriber.timestamp);
+                }
+            }
+
+            updateBitsDisplay() {
+                if (this.latestBits) {
+                    this.elements.bits.textContent = this.latestBits.username;
+                    this.elements.bitsAmount.textContent = `${this.latestBits.amount} bits`;
+                    this.elements.bitsTime.textContent = this.formatTime(this.latestBits.timestamp);
+                }
+            }
+
+            animateRow(rowId) {
+                const row = this.elements[rowId.replace('Row', 'Row')];
+                if (row) {
+                    row.classList.add('new-activity');
+                    setTimeout(() => {
+                        row.classList.remove('new-activity');
+                    }, 600);
+                }
+            }
+
+            formatTime(timestamp) {
+                const now = new Date();
+                const diff = Math.floor((now - timestamp) / 1000);
+
+                if (diff < 60) return 'ahora';
+                if (diff < 3600) return `hace ${Math.floor(diff / 60)}m`;
+                if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`;
+                return `hace ${Math.floor(diff / 86400)}d`;
+            }
+
+            initializeTwitchIntegration() {
+                this.setupStreamElementsIntegration();
+
+                this.setupTwitchChatIntegration();
+
+                this.setupManualIntegration();
+            }
+
+            setupStreamElementsIntegration() {
+                window.addEventListener('onEventReceived', (obj) => {
+                    if (!obj.detail.event) return;
+
+                    const event = obj.detail.event;
+                    const data = event.data || {};
+
+                    switch (event.type) {
+                        case 'follower':
+                            this.addFollower(data.username || data.name);
+                            break;
+                        case 'subscriber':
+                            this.addSubscriber(data.username || data.name, data.tier || 1);
+                            break;
+                        case 'cheer':
+                            this.addBits(data.username || data.name, data.amount);
+                            break;
+                    }
+                });
+            }
+
+            setupTwitchChatIntegration() {
+                const channelName = this.getChannelFromURL() || 'justneki';
+
+                if (channelName && channelName !== 'justneki') {
+                    this.connectToTwitchChat(channelName);
+                }
+            }
+
+            setupManualIntegration() {
+                window.twitchActivity = {
+                    addFollower: (username) => this.addFollower(username),
+                    addSubscriber: (username, tier) => this.addSubscriber(username, tier),
+                    addBits: (username, amount) => this.addBits(username, amount)
+                };
+            }
+
+            getChannelFromURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('channel') || params.get('channelName');
+            }
+
+            connectToTwitchChat(channelName) {
+                const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+                ws.onopen = () => {
+                    ws.send('PASS SCHMOOPIIE'); // Anonymous connection
+                    ws.send('NICK justbot12345');
+                    ws.send(`JOIN #${channelName.toLowerCase()}`);
+                    console.log(`Connected to Twitch chat: #${channelName}`);
+                };
+
+                ws.onmessage = (event) => {
+                    const message = event.data;
+
+                    if (message.includes('msg-id=sub') || message.includes('msg-id=resub')) {
+                        const username = this.extractUsername(message);
+                        if (username) this.addSubscriber(username);
+                    }
+
+                    if (message.includes('bits=')) {
+                        const username = this.extractUsername(message);
+                        const bits = this.extractBits(message);
+                        if (username && bits) this.addBits(username, bits);
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    console.log('Twitch chat connection error:', error);
+                };
+            }
+
+            extractUsername(message) {
+                const match = message.match(/:(\w+)!\w+@\w+\.tmi\.twitch\.tv/);
+                return match ? match[1] : null;
+            }
+
+            extractBits(message) {
+                const match = message.match(/bits=(\d+)/);
+                return match ? parseInt(match[1]) : null;
+            }
+
+            setupStreamlabsIntegration() {
+                if (window.obsstudio) {
+                    window.obsstudio.onActiveChange = (active) => {
+                        if (active) {
+                            console.log('OBS source activated');
+                        }
+                    };
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.recentActivity = new TwitchRecentActivity();
+        });
+
+        window.addFollower = (username) => window.recentActivity?.addFollower(username);
+        window.addSubscriber = (username, tier) => window.recentActivity?.addSubscriber(username, tier);
+        window.addBits = (username, amount) => window.recentActivity?.addBits(username, amount);
+
+        window.onEventReceived = (obj) => {
+            const event = obj.detail?.event;
+            if (!event) return;
+
+            switch (event.type) {
+                case 'follow':
+                case 'follower':
+                    window.addFollower(event.data?.username || event.data?.name);
+                    break;
+                case 'subscription':
+                case 'subscriber':
+                    window.addSubscriber(event.data?.username || event.data?.name, event.data?.tier);
+                    break;
+                case 'cheer':
+                case 'bits':
+                    window.addBits(event.data?.username || event.data?.name, eveata?.amount);
+                    break;
+            }
+        };
+    </script>
+</body>
+
+</html>
