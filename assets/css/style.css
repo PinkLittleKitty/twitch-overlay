@@ -1,46 +1,79 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600&display=swap');
 
-/* Define the theme variables for easy reuse */
-:root {
-    --bg-cream: #f5f1e8;
-    --text-brown: #8b7355;
-    --border-tan: #d4c4a8;
-    --accent-green: #a8c686;
-    --accent-blue: #6b8db5;
-    --bg-blue-light: #e8f4fd;
-    --font-primary: 'Inter', 'Arial', sans-serif;
-    --wood-texture: url('../images/wood_texture.png'); /* We'll need to find a nice wood texture! */
+:root{
+    --bg-grad-1: #FFEFBA; /* warm cream */
+    --bg-grad-2: #FDE4FF; /* soft pink */
+    --accent-1: #FF6B6B; /* playful red */
+    --accent-2: #6BCBFF; /* sky blue */
+    --accent-3: #FFD166; /* warm yellow */
+    --muted: #3a3a3a;
+    --glass: rgba(255,255,255,0.08);
+    --glass-2: rgba(255,255,255,0.12);
+    --font-display: 'Bangers', 'Inter', sans-serif;
+    --font-ui: 'Inter', system-ui, sans-serif;
 }
 
-/* Basic body setup for all overlay components */
-body {
-    font-family: var(--font-primary);
-    background: transparent;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
+html,body{height:100%;margin:0;padding:0;background:transparent;font-family:var(--font-ui);}
+
+.overlay-root{
+    position:relative;
+    width:1280px;
+    height:720px;
+    margin:24px auto;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 10px 40px rgba(0,0,0,0.35);
+    background: linear-gradient(120deg,var(--bg-grad-1),var(--bg-grad-2));
+    border:6px solid rgba(255,255,255,0.06);
 }
 
-.webcam-frame {
-    width: 1280px; /* Set to your webcam's base resolution */
-    height: 720px;
-    background: transparent;
-    border: 25px solid transparent;
-    border-image: var(--wood-texture) 30 stretch; /* Creates a wood-grain border */
-    border-radius: 40px; /* Nice rounded corners */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    position: relative;
+.component{
+    position:absolute;display:block;pointer-events:auto;
+    font-family:var(--font-ui);
 }
 
-/* A little leaf icon in the corner, just like the furniture! */
-.webcam-frame .frame-icon {
-    position: absolute;
-    top: -15px;
-    left: 20px;
-    width: 50px;
-    height: 50px;
-    background-color: var(--accent-green);
-    -webkit-mask: url('assets/images/leaf.svg') no-repeat center;
-    mask: url('assets/images/leaf.svg') no-repeat center;
+.top-left{top:18px;left:18px}
+.top-right{top:18px;right:18px}
+.bottom-left{bottom:18px;left:18px}
+.bottom-right{bottom:18px;right:18px}
+.center{top:50%;left:50%;transform:translate(-50%,-50%)}
+
+.balatro-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    backdrop-filter: blur(6px) saturate(1.1);
+    border-radius:12px;
+    padding:10px 14px;
+    color:var(--muted);
+    border:2px solid var(--glass-2);
+    box-shadow:0 8px 30px rgba(0,0,0,0.20);
 }
+
+.balatro-card h3{font-family:var(--font-display);margin:0 0 6px 0;color:var(--accent-1);font-size:20px;letter-spacing:0.5px}
+.balatro-card p{margin:0;font-size:14px}
+
+.balatro-webcam{
+    width:360px;height:210px;border-radius:16px;overflow:hidden;
+    background:linear-gradient(180deg,#fff7ea,#fff3f0);
+    border:6px solid rgba(0,0,0,0.08);
+    box-shadow:0 12px 36px rgba(107,33,168,0.08) inset, 0 8px 30px rgba(0,0,0,0.25);
+}
+.balatro-webcam .frame-badge{
+    position:absolute;left:10px;top:10px;background:var(--accent-3);padding:6px 10px;border-radius:10px;font-weight:600;color:#222;font-size:12px;box-shadow:0 6px 16px rgba(255,209,102,0.12);
+}
+
+.balatro-chat{width:300px;max-height:360px;overflow:hidden;display:flex;flex-direction:column}
+.balatro-chat .messages{flex:1;overflow:auto;padding:8px;}
+.balatro-chat .messages .msg{margin-bottom:10px;padding:6px 8px;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+.balatro-chat .input{display:none}
+
+.preview-controls{position:absolute;right:14px;top:14px;z-index:1000;display:flex;gap:8px}
+.preview-controls button{background:var(--accent-2);border:none;padding:8px 10px;border-radius:8px;color:#052;cursor:pointer;font-weight:700;box-shadow:0 6px 18px rgba(107,203,255,0.12)}
+
+.brb-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:900;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));color:white}
+.brb-card{background:linear-gradient(120deg,var(--accent-1),var(--accent-2));padding:36px;border-radius:18px;box-shadow:0 30px 60px rgba(0,0,0,0.45);text-align:center}
+.brb-card h1{font-family:var(--font-display);font-size:48px;margin:0 0 8px}
+.brb-card p{margin:0;font-size:18px}
+
+*{box-sizing:border-box}
+

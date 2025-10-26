@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .balatro-chat {
+            font-family: 'Inter', 'Arial', sans-serif;
+            background: transparent;
+            overflow: hidden;
+            height: 100%;
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+        .chat-container {
+            width: 380px;
+            height: 700px;
+            background: #1a1625;
+            border: 2px solid #4a4458;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-container::before {
+            content: 'CHAT';
+            position: absolute;
+            top: 12px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 11px;
+            color: #8b7d6b;
+            font-weight: 600;
+            z-index: 10;
+            letter-spacing: 2px;
+        }
+
+
+
+        .chat-header {
+            background: transparent;
+            padding: 50px 20px 20px 20px;
+            border-bottom: none;
+            position: relative;
+            border-radius: 60px 60px 0 0;
+        }
+
+        .app-title {
+            color: #d4af37;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+
+        .chat-messages {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            background: transparent;
+            position: relative;
+            border-radius: 0 0 60px 60px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            margin-top: 25px;
+            opacity: 0;
+            position: relative;
+            width: 100%;
+            animation: messageBounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            transform: none;
+        }
+
+        .message:nth-child(3n) .message-bubble::before {
+            left: 22px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .message:nth-child(4n) .message-bubble::after {
+            left: 28px;
+            width: 14px;
+            height: 14px;
+        }
+
+        .message-bubble {
+            position: relative;
+            padding: 12px 16px;
+            background: #2a2438;
+            border: 1px solid #4a4458;
+            margin: 8px 0;
+            max-width: 85%;
+            border-radius: 4px;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            overflow: visible;
+        }
+
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background: #d4af37;
+            clip-path: polygon(100% 0, 0 0, 100% 100%);
+            z-index: 2;
+        }
+
+        .message-bubble::after {
+            content: '';
+            display: none;
+        }
+
+        .message.special .message-bubble,
+        .message.moderator .message-bubble,
+        .message.vip .message-bubble {
+            background: #3d2f4a;
+            border-color: #d4af37;
+            box-shadow: 
+                0 2px 12px rgba(212, 175, 55, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .message.special .message-bubble::before,
+        .message.moderator .message-bubble::before,
+        .message.vip .message-bubble::before {
+            background: #d4af37;
+        }
+
+        .message-bubble:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 5px 15px rgba(139, 115, 85, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+
+        .username {
+            color: #d4af37;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .username-badge {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #4a4458;
+            margin-right: 6px;
+            background: #4a4458;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #d4af37;
+            font-weight: bold;
+            position: relative;
+            left: 0;
+            top: 0;
+            border-radius: 2px;
+        }
+
+        .message-text {
+            color: #c9b99b;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .message.special .message-text,
+        .message.moderator .message-text,
+        .message.vip .message-text {
+            color: #e6d7b8;
+            font-weight: 400;
+        }
+
+        .message.special .username,
+        .message.moderator .username,
+        .message.vip .username {
+            color: #d4af37;
+        }
+
+        .message-timestamp {
+            position: absolute;
+            top: -18px;
+            right: 4px;
+            background: #1a1625;
+            color: #8b7d6b;
+            padding: 2px 6px;
+            font-size: 8px;
+            font-weight: 500;
+            border-radius: 2px;
+            border: 1px solid #4a4458;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .subscriber .username-badge {
+            background: #6b5b73;
+            color: #d4af37;
+            border-color: #d4af37;
+        }
+
+        .moderator .username-badge {
+            background: #d4af37;
+            color: #1a1625;
+            border-color: #d4af37;
+        }
+
+        .vip .username-badge {
+            background: #8b7d6b;
+            color: #d4af37;
+            border-color: #d4af37;
+        }
+
+        @keyframes messageBounceIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.8);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-5px) scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+
+
+        .typing-indicator {
+            position: absolute;
+            bottom: 15px;
+            left: 25px;
+            color: #f39f86;
+            font-size: 11px;
+            font-style: italic;
+            opacity: 0;
+            animation: typingFade 2s ease-in-out infinite;
+            text-shadow: 0 0 8px rgba(243, 159, 134, 0.4);
+        }
+
+        @keyframes typingFade {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .chat-messages {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            width: 8px;
+            height: 8px;
+            background: #e94560;
+            z-index: 10;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px rgba(233, 69, 96, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .connection-status.connected {
+            background: #f39f86;
+            box-shadow: 
+                0 0 10px rgba(243, 159, 134, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .emote {
+            height: 20px;
+            width: auto;
+            vertical-align: middle;
+            margin: 0 2px;
+        }
+
+        .badge {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="balatro-card balatro-chat chat-container">
+        <div class="chat-header">
+            <div class="connection-status" id="connectionStatus"></div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+        </div>
+    </div>
+
+    <script>
+        class TwitchIRCClient {
+            constructor(channel) {
+                this.channel = channel.toLowerCase();
+                this.ws = null;
+                this.connected = false;
+                this.eventHandlers = {};
+            }
+
+            on(event, handler) {
+                if (!this.eventHandlers[event]) {
+                    this.eventHandlers[event] = [];
+                }
+                this.eventHandlers[event].push(handler);
+            }
+
+            emit(event, ...args) {
+                if (this.eventHandlers[event]) {
+                    this.eventHandlers[event].forEach(handler => handler(...args));
+                }
+            }
+
+            connect() {
+                return new Promise((resolve, reject) => {
+                    try {
+                        this.ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+                        
+                        this.ws.onopen = () => {
+                            console.log('Conectando a Twitch IRC...');
+                            this.ws.send('PASS SCHMOOPIIE');
+                            this.ws.send('NICK justinfan12345');
+                            this.ws.send(`JOIN #${this.channel}`);
+                        };
+
+                        this.ws.onmessage = (event) => {
+                            this.handleMessage(event.data);
+                        };
+
+                        this.ws.onclose = () => {
+                            this.connected = false;
+                            this.emit('disconnected');
+                            console.log('Desconectado del chat de Twitch');
+                        };
+
+                        this.ws.onerror = (error) => {
+                            console.error('Error de WebSocket:', error);
+                            reject(error);
+                        };
+
+                        this.on('connected', () => resolve());
+                        
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            handleMessage(data) {
+                const lines = data.trim().split('\n');
+                
+                lines.forEach(line => {
+                    if (line.startsWith('PING')) {
+                        this.ws.send('PONG :tmi.twitch.tv');
+                        return;
+                    }
+
+                    if (line.includes('Welcome, GLHF!')) {
+                        this.connected = true;
+                        this.emit('connected');
+                        return;
+                    }
+
+                    if (line.includes('PRIVMSG')) {
+                        this.parsePrivMsg(line);
+                    }
+                });
+            }
+
+            parsePrivMsg(line) {
+                try {
+                    const parts = line.split(' ');
+                    const userPart = parts[0].substring(1);
+                    const username = userPart.split('!')[0];
+                    
+                    const messageStart = line.indexOf(' :', line.indexOf('PRIVMSG')) + 2;
+                    const message = line.substring(messageStart);
+                    
+                    const tags = {
+                        'display-name': username,
+                        username: username.toLowerCase(),
+                        subscriber: false,
+                        mod: false,
+                        badges: null
+                    };
+
+                    this.emit('message', `#${this.channel}`, tags, message, false);
+                } catch (error) {
+                    console.error('Error parseando mensaje:', error);
+                }
+            }
+        }
+
+        class TwitchChatBox {
+            constructor() {
+                this.messages = [];
+                this.maxMessages = 50;
+                this.chatContainer = document.getElementById('chatMessages');
+                this.connectionStatus = document.getElementById('connectionStatus');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                this.messageCount = 0;
+                
+                this.channelName = 'valem_ard';
+                
+                this.playSound = (type) => {
+                    console.log(`🔊 Playing ${type} sound effect`);
+                };
+                
+                this.initTwitchChat();
+                this.initVisualEffects();
+            }
+
+            initVisualEffects() {
+                setInterval(() => {
+                    if (Math.random() < 0.3) {
+                        this.showTypingIndicator();
+                    }
+                }, 15000);
+
+                setInterval(() => {
+                    const header = document.querySelector('.chat-header');
+                    header.style.animation = 'none';
+                    setTimeout(() => {
+                        header.style.animation = '';
+                    }, 100);
+                }, 30000);
+            }
+
+            showTypingIndicator() {
+                this.typingIndicator.style.opacity = '0.7';
+                setTimeout(() => {
+                    this.typingIndicator.style.opacity = '0';
+                }, 3000);
+            }
+
+            initTwitchChat() {
+                console.log('Inicializando cliente IRC nativo...');
+                
+                this.client = new TwitchIRCClient(this.channelName);
+
+                this.client.on('message', (channel, tags, message, self) => {
+                    this.addMessage(tags, message);
+                });
+
+                this.client.on('connected', () => {
+                    this.connectionStatus.classList.add('connected');
+                    console.log('Conectado al chat de Twitch');
+                });
+
+                this.client.on('disconnected', () => {
+                    this.connectionStatus.classList.remove('connected');
+                    console.log('Desconectado del chat de Twitch');
+                });
+
+                this.client.connect().then(() => {
+                    console.log('Conectado exitosamente al canal:', this.channelName);
+                }).catch((error) => {
+                    console.error('Error al conectar:', error);
+                    this.addDemoMessages();
+                });
+            }
+
+            addMessage(tags, message) {
+                this.messageCount++;
+                const messageElement = this.createMessageElement(tags, message);
+                
+                const specialKeywords = ['!'];
+                const hasSpecialKeyword = specialKeywords.some(keyword => 
+                    message.toLowerCase().includes(keyword.toLowerCase())
+                );
+                
+                if (tags.mod || tags.vip || hasSpecialKeyword || this.messageCount % 7 === 0) {
+                    messageElement.classList.add('special');
+                }
+                
+                this.chatContainer.appendChild(messageElement);
+                
+                this.playSound(messageElement.classList.contains('special') ? 'special' : 'message');
+
+                this.messages.push(messageElement);
+                if (this.messages.length > this.maxMessages) {
+                    const oldMessage = this.messages.shift();
+                    oldMessage.style.transition = 'all 0.5s ease-out';
+                    oldMessage.style.transform = 'translateX(-100%) scale(0.6) rotate(-10deg)';
+                    oldMessage.style.opacity = '0';
+                    setTimeout(() => oldMessage.remove(), 500);
+                }
+
+                this.smoothScrollToBottom();
+            }
+
+            smoothScrollToBottom() {
+                const scrollHeight = this.chatContainer.scrollHeight;
+                const height = this.chatContainer.clientHeight;
+                const maxScrollTop = scrollHeight - height;
+                
+                const startScrollTop = this.chatContainer.scrollTop;
+                const distance = maxScrollTop - startScrollTop;
+                const duration = 500;
+                let start = null;
+                
+                const step = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    const easeInOut = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                    
+                    this.chatContainer.scrollTop = startScrollTop + (distance * easeInOut);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    }
+                };
+                
+                requestAnimationFrame(step);
+            }
+
+            createMessageElement(tags, message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+
+                if (tags.subscriber) messageDiv.classList.add('subscriber');
+                if (tags.mod) messageDiv.classList.add('moderator');
+                if (tags.badges && tags.badges.vip) messageDiv.classList.add('vip');
+
+                const usernameDiv = document.createElement('div');
+                usernameDiv.className = 'username';
+
+                const badgeDiv = document.createElement('div');
+                badgeDiv.className = 'username-badge';
+                
+                if (tags.subscriber) {
+                    badgeDiv.innerHTML = 'S';
+                } else if (tags.mod) {
+                    badgeDiv.innerHTML = 'M';
+                } else if (tags.badges && tags.badges.vip) {
+                    badgeDiv.innerHTML = 'V';
+                } else {
+                    badgeDiv.innerHTML = '●';
+                }
+
+                const usernameTextSpan = document.createElement('span');
+                usernameTextSpan.textContent = tags['display-name'] || tags.username;
+
+                usernameDiv.appendChild(badgeDiv);
+                usernameDiv.appendChild(usernameTextSpan);
+
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble';
+
+                // Add timestamp
+                const timestampDiv = document.createElement('div');
+                timestampDiv.className = 'message-timestamp';
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                timestampDiv.textContent = timeString;
+
+                const messageTextDiv = document.createElement('div');
+                messageTextDiv.className = 'message-text';
+                messageTextDiv.textContent = message;
+
+                if (message.includes('?')) {
+                    const questionIcon = document.createElement('div');
+                    questionIcon.className = 'message-icon question-icon';
+                    questionIcon.innerHTML = '?';
+                    bubbleDiv.appendChild(questionIcon);
+                }
+
+                if (message.includes('!')) {
+                    const exclamationIcon = document.createElement('div');
+                    exclamationIcon.className = 'message-icon exclamation-icon';
+                    exclamationIcon.innerHTML = '!';
+                    bubbleDiv.appendChild(exclamationIcon);
+                }
+
+                if (message.toLowerCase().includes('cool') || message.toLowerCase().includes('awesome')) {
+                    bubbleDiv.classList.add('cool-message');
+                }
+
+                bubbleDiv.appendChild(usernameDiv);
+                bubbleDiv.appendChild(messageTextDiv);
+                bubbleDiv.appendChild(timestampDiv);
+
+                messageDiv.appendChild(bubbleDiv);
+
+                return messageDiv;
+            }
+
+            addDemoMessages() {
+                const demoMessages = [
+                    { username: 'CardShark', message: 'This Balatro overlay is absolutely insane! ♠️', type: 'vip' },
+                    { username: 'PokerFace', message: 'Royal flush of design right here! 👑', type: 'mod' },
+                    { username: 'ChipStack', message: 'All in on this aesthetic! 🎰', type: 'subscriber' },
+                    { username: 'JokerWild', message: 'The neon vibes are perfect ✨', type: 'subscriber' },
+                    { username: 'AceHigh', message: 'Dealer, hit me with more of this style!', type: 'normal' },
+                    { username: 'BluffMaster', message: 'Going all-in on following this stream! 🃏', type: 'subscriber' },
+                    { username: 'DeckBuilder', message: 'This UI is a winning hand! 💎', type: 'mod' },
+                    { username: 'CasinoKing', message: 'House always wins with design like this! 🎲', type: 'normal' },
+                    { username: 'LuckyDraw', message: 'Jackpot! This overlay hits different 🎯', type: 'vip' },
+                    { username: 'HighRoller', message: 'Betting big on this stream! Amazing work! 💰', type: 'subscriber' }
+                ];
+
+                let delay = 2000;
+                demoMessages.forEach((demo, index) => {
+                    setTimeout(() => {
+                        const mockTags = {
+                            'display-name': demo.username,
+                            username: demo.username.toLowerCase(),
+                            subscriber: demo.type === 'subscriber',
+                            mod: demo.type === 'mod',
+                            badges: demo.type === 'vip' ? { vip: true } : null
+                        };
+                        this.addMessage(mockTags, demo.message);
+                        
+                        if (demo.username === 'PhantomThief' || demo.username === 'AkechiGoro') {
+                            this.triggerSpecialEffect();
+                        }
+                    }, delay + (index * 3000));
+                });
+            }
+
+            triggerSpecialEffect() {
+                const container = document.querySelector('.chat-container');
+                container.style.animation = 'none';
+                container.style.boxShadow = '0 0 50px rgba(255, 0, 0, 1), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 100px rgba(255, 0, 0, 0.8)';
+                
+                setTimeout(() => {
+                    container.style.animation = '';
+                    container.style.boxShadow = '';
+                }, 1000);
+            }
+        }
+
+        function setupOBSMode() {
+            document.body.style.background = 'transparent';
+        }
+
+        if (window.location.search.includes('obs=true')) {
+            setupOBSMode();
+        }
+
+        console.log('Iniciando TwitchChatBox con cliente IRC nativo...');
+        new TwitchChatBox();
+
+        function changeChannel(newChannel) {
+            console.log(`Cambiando a canal: ${newChannel}`);
+        }
+    </script>
+    </div>
+</body>
+</html>

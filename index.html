@@ -1,734 +1,522 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHAT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stream overlay demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Inter', 'Arial', sans-serif;
-            background: transparent;
-            overflow: hidden;
-            height: 100vh;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse at center, #2a2438 0%, #1a1625 70%, #0f0d14 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      filter: contrast(1.1) saturate(1.2);
+    }
 
-        .chat-container {
-            width: 380px;
-            height: 700px;
-            background: #f5f1e8;
-            border: none;
-            border-radius: 60px;
-            position: relative;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.15),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
-        }
+    .overlay-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-        /* Status bar area */
-        .chat-container::before {
-            content: '••• 2:51 AM ⚙';
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 12px;
-            color: #8b7355;
-            font-weight: 500;
-            z-index: 10;
-        }
+    .background-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
 
+    .components-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+    }
 
+    .component-frame {
+      position: absolute;
+      pointer-events: auto;
+    }
 
-        .chat-header {
-            background: transparent;
-            padding: 50px 20px 20px 20px;
-            border-bottom: none;
-            position: relative;
-            border-radius: 60px 60px 0 0;
-        }
+    .chat-component {
+      top: 50px;
+      right: 50px;
+    }
 
-        .app-title {
-            color: #8b7355;
-            font-size: 24px;
-            font-weight: 600;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-            margin-bottom: 20px;
-        }
+    .now-playing-component {
+      bottom: 50px;
+      left: 50px;
+    }
 
+    .stream-info-component {
+      top: 50px;
+      left: 50px;
+    }
 
-        .chat-messages {
-            height: calc(100% - 120px);
-            overflow-y: auto;
-            padding: 0 20px 20px 20px;
-            background: transparent;
-            position: relative;
-            border-radius: 0 0 60px 60px;
-        }
+    .recent-activity-component {
+      bottom: 200px;
+      left: 50px;
+    }
 
-        .message {
-            margin-bottom: 16px;
-            margin-top: 25px;
-            opacity: 0;
-            position: relative;
-            width: 100%;
-            animation: messageBounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-            transform: none;
-        }
+    .webcam-component {
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-        /* Subtle variations for cloud bumps */
-        .message:nth-child(3n) .message-bubble::before {
-            left: 22px;
-            width: 18px;
-            height: 18px;
-        }
+    .donation-alert-component {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+    }
 
-        .message:nth-child(4n) .message-bubble::after {
-            left: 28px;
-            width: 14px;
-            height: 14px;
-        }
+    .overlay-header {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      text-align: center;
+    }
 
-        /* Animal Crossing cloud-shaped text bubbles */
-        .message-bubble {
-            position: relative;
-            padding: 16px 20px;
-            background: #ffffff;
-            border: 2px solid #d4c4a8;
-            margin: 12px 0;
-            max-width: 85%;
-            border-radius: 25px;
-            box-shadow: 
-                0 3px 8px rgba(139, 115, 85, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            overflow: visible;
-        }
+    .overlay-title {
+      color: #d4af37;
+      font-size: 24px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
 
-        /* Main cloud bumps */
-        .message-bubble::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 18px;
-            width: 16px;
-            height: 16px;
-            background: #ffffff;
-            border: 2px solid #d4c4a8;
-            border-radius: 50%;
-            border-bottom: none;
-            z-index: 2;
-        }
+    .overlay-subtitle {
+      color: #8b7d6b;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
 
-        .message-bubble::after {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 32px;
-            width: 12px;
-            height: 12px;
-            background: #ffffff;
-            border: 2px solid #d4c4a8;
-            border-radius: 50%;
-            border-bottom: none;
-            z-index: 2;
-        }
+    .control-panel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1a1625;
+      border: 2px solid #4a4458;
+      border-radius: 8px;
+      padding: 16px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
 
-        /* Special cloud bubbles with different colors */
-        .message.special .message-bubble,
-        .message.moderator .message-bubble,
-        .message.vip .message-bubble {
-            background: #e8f4fd;
-            border-color: #b8d4ea;
-            box-shadow: 
-                0 3px 8px rgba(184, 212, 234, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        }
+    .control-title {
+      color: #d4af37;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .message.special .message-bubble::before,
-        .message.moderator .message-bubble::before,
-        .message.vip .message-bubble::before {
-            background: #e8f4fd;
-            border-color: #b8d4ea;
-        }
+    .control-button {
+      display: block;
+      width: 100%;
+      background: #4a4458;
+      color: #d4af37;
+      border: 1px solid #6b5b73;
+      padding: 6px 12px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-        .message.special .message-bubble::after,
-        .message.moderator .message-bubble::after,
-        .message.vip .message-bubble::after {
-            background: #e8f4fd;
-            border-color: #b8d4ea;
-        }
+    .control-button:hover {
+      background: #6b5b73;
+      border-color: #d4af37;
+    }
 
-        .message-bubble:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 
-                0 5px 15px rgba(139, 115, 85, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            transition: all 0.2s ease;
-        }
+    .control-button:last-child {
+      margin-bottom: 0;
+    }
 
-        .username {
-            color: #8b7355;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 12px;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            text-transform: none;
-            letter-spacing: 0;
-        }
+    @media (max-width: 1400px) {
+      .chat-component {
+        right: 20px;
+        top: 20px;
+      }
 
-        .username-badge {
-            width: 18px;
-            height: 18px;
-            border: none;
-            margin-right: 8px;
-            background: #a8c686;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            color: #ffffff;
-            font-weight: bold;
-            position: relative;
-            left: 0;
-            top: 0;
-            border-radius: 50%;
-            box-shadow: 
-                0 2px 4px rgba(168, 198, 134, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
-        }
+      .stream-info-component {
+        left: 20px;
+        top: 20px;
+      }
 
-        .message-text {
-            color: #8b7355;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.4;
-        }
+      .now-playing-component {
+        left: 20px;
+        bottom: 20px;
+      }
 
-        /* Text for special bubbles */
-        .message.special .message-text,
-        .message.moderator .message-text,
-        .message.vip .message-text {
-            color: #6b8db5;
-            font-weight: 500;
-        }
+      .recent-activity-component {
+        left: 20px;
+        bottom: 160px;
+      }
+    }
 
-        .message.special .username,
-        .message.moderator .username,
-        .message.vip .username {
-            color: #6b8db5;
-        }
+    @media (max-width: 768px) {
+      .overlay-title {
+        font-size: 24px;
+      }
 
-        /* Timestamp styling */
-        .message-timestamp {
-            position: absolute;
-            top: -22px;
-            right: 8px;
-            background: #d4c4a8;
-            color: #8b7355;
-            padding: 4px 8px;
-            font-size: 9px;
-            font-weight: 500;
-            border-radius: 10px;
-            box-shadow: 
-                0 2px 4px rgba(212, 196, 168, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
-            z-index: 10;
-            white-space: nowrap;
-        }
+      .control-panel {
+        bottom: 10px;
+        right: 10px;
+        padding: 15px;
+      }
+    }
 
-        .subscriber .username-badge {
-            background: #f4d03f;
-            color: #8b7355;
-        }
+    .demo-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #1a1625;
+      border: 2px solid #4a4458;
+      border-radius: 4px;
+      padding: 8px 12px;
+      z-index: 1001;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
 
-        .moderator .username-badge {
-            background: #58d68d;
-            color: #ffffff;
-        }
+    .demo-text {
+      color: #d4af37;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .vip .username-badge {
-            background: #ec7063;
-            color: #ffffff;
-        }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #2a2438 0%, #1a1625 70%, #0f0d14 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
 
-        @keyframes messageBounceIn {
-            0% {
-                opacity: 0;
-                transform: translateY(20px) scale(0.8);
-            }
-            60% {
-                opacity: 1;
-                transform: translateY(-5px) scale(1.05);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
+    .loading-content {
+      text-align: center;
+    }
 
-        /* Phone-like message layout */
-        .chat-messages {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+    .loading-title {
+      color: #d4af37;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      animation: loadingPulse 2s ease-in-out infinite;
+    }
 
+    .loading-subtitle {
+      color: #8b7d6b;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
 
+    @keyframes loadingPulse {
 
-        .typing-indicator {
-            position: absolute;
-            bottom: 15px;
-            left: 25px;
-            color: #a8c686;
-            font-size: 11px;
-            font-style: italic;
-            opacity: 0;
-            animation: typingFade 2s ease-in-out infinite;
-        }
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
 
-        @keyframes typingFade {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 0.7; }
-        }
+      50% {
+        transform: scale(1.02);
+        opacity: 0.8;
+      }
+    }
 
-        .chat-messages::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
-
-        .chat-messages {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
-        }
-
-        .connection-status {
-            position: absolute;
-            top: 25px;
-            right: 30px;
-            width: 8px;
-            height: 8px;
-            background: #ec7063;
-            z-index: 10;
-            border-radius: 50%;
-            box-shadow: 
-                0 2px 4px rgba(236, 112, 99, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
-        }
-
-        .connection-status.connected {
-            background: #58d68d;
-            box-shadow: 
-                0 2px 4px rgba(88, 214, 141, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
-        }
-
-        .emote {
-            height: 20px;
-            width: auto;
-            vertical-align: middle;
-            margin: 0 2px;
-        }
-
-        /* Efectos adicionales para badges */
-        .badge {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            margin-right: 5px;
-            vertical-align: middle;
-            border-radius: 2px;
-        }
-    </style>
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="app-title">Nookófono</div>
-            <div class="connection-status" id="connectionStatus"></div>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-        </div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="loading-title">BALATRO</div>>
+    </div>
+  </div>
+
+  <div class="overlay-container">
+    <div class="background-layer">
+      <iframe src="components/animated-background.html" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
-    <script>
-        class TwitchIRCClient {
-            constructor(channel) {
-                this.channel = channel.toLowerCase();
-                this.ws = null;
-                this.connected = false;
-                this.eventHandlers = {};
-            }
+    <div class="demo-indicator">
+      <div class="demo-text">Demo</div>
+    </div>
 
-            on(event, handler) {
-                if (!this.eventHandlers[event]) {
-                    this.eventHandlers[event] = [];
-                }
-                this.eventHandlers[event].push(handler);
-            }
+    <div class="components-layer">
+      <div class="component-frame chat-component">
+        <iframe src="components/chat.html" width="380" height="700"
+          style="border: none; background: transparent;"></iframe>
+      </div>
 
-            emit(event, ...args) {
-                if (this.eventHandlers[event]) {
-                    this.eventHandlers[event].forEach(handler => handler(...args));
-                }
-            }
+      
+      <!-- NON FUNCTIONAL -->
+      <div class="component-frame stream-info-component">
+        <iframe src="components/stream-info.html" width="280" height="200"
+          style="border: none; background: transparent;"></iframe>
+      </div>
 
-            connect() {
-                return new Promise((resolve, reject) => {
-                    try {
-                        this.ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-                        
-                        this.ws.onopen = () => {
-                            console.log('Conectando a Twitch IRC...');
-                            this.ws.send('PASS SCHMOOPIIE');
-                            this.ws.send('NICK justinfan12345');
-                            this.ws.send(`JOIN #${this.channel}`);
-                        };
+      <div class="component-frame now-playing-component">
+        <iframe src="components/now-playing.html" width="350" height="120"
+          style="border: none; background: transparent;"></iframe>
+      </div>
 
-                        this.ws.onmessage = (event) => {
-                            this.handleMessage(event.data);
-                        };
+      <div class="component-frame recent-activity-component">
+        <iframe src="components/recent-followers.html" width="600" height="120"
+          style="border: none; background: transparent;"></iframe>
+      </div>
 
-                        this.ws.onclose = () => {
-                            this.connected = false;
-                            this.emit('disconnected');
-                            console.log('Desconectado del chat de Twitch');
-                        };
+      <div class="component-frame webcam-component">
+        <iframe src="components/webcam-frame.html" width="320" height="240"
+          style="border: none; background: transparent;"></iframe>
+      </div>
 
-                        this.ws.onerror = (error) => {
-                            console.error('Error de WebSocket:', error);
-                            reject(error);
-                        };
+      <div class="component-frame donation-alert-component" id="donationAlertFrame" style="display: none;">
+        <iframe src="components/donation-alerts.html" width="400" height="200"
+          style="border: none; background: transparent;"></iframe>
+      </div>
+    </div>
 
-                        this.on('connected', () => resolve());
-                        
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-            }
+    <div class="control-panel">
+      <div class="control-title">Controls</div>
+      <button class="control-button" onclick="showDonationAlert()">Test Donation Alert</button>
+      <button class="control-button" onclick="triggerCelebration()">Celebration Effect</button>
+      <button class="control-button" onclick="showBRBScene()">Show BRB Scene</button>
+      <button class="control-button" onclick="resetOverlay()">Reset Overlay</button>
+      <button class="control-button" onclick="toggleFullscreen()">Toggle Fullscreen</button>
+    </div>
+  </div>
 
-            handleMessage(data) {
-                const lines = data.trim().split('\n');
-                
-                lines.forEach(line => {
-                    if (line.startsWith('PING')) {
-                        this.ws.send('PONG :tmi.twitch.tv');
-                        return;
-                    }
+  <div id="brbScene" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000;">
+    <iframe src="components/brb-scene.html" style="width: 100%; height: 100%; border: none;"></iframe>
+  </div>
 
-                    if (line.includes('Welcome, GLHF!')) {
-                        this.connected = true;
-                        this.emit('connected');
-                        return;
-                    }
+  <script>
+    class BalatroOverlay {
+      constructor() {
+        this.isFullscreen = false;
+        this.brbActive = false;
+        this.init();
+      }
 
-                    if (line.includes('PRIVMSG')) {
-                        this.parsePrivMsg(line);
-                    }
-                });
-            }
+      init() {
+        setTimeout(() => {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+        }, 2000);
 
-            parsePrivMsg(line) {
-                try {
-                    const parts = line.split(' ');
-                    const userPart = parts[0].substring(1);
-                    const username = userPart.split('!')[0];
-                    
-                    const messageStart = line.indexOf(' :', line.indexOf('PRIVMSG')) + 2;
-                    const message = line.substring(messageStart);
-                    
-                    const tags = {
-                        'display-name': username,
-                        username: username.toLowerCase(),
-                        subscriber: false,
-                        mod: false,
-                        badges: null
-                    };
+        this.startDemoEffects();
 
-                    this.emit('message', `#${this.channel}`, tags, message, false);
-                } catch (error) {
-                    console.error('Error parseando mensaje:', error);
-                }
-            }
+        this.setupKeyboardShortcuts();
+
+        console.log('🎰 Balatro Overlay initialized! Welcome to the casino!');
+      }
+
+      startDemoEffects() {
+        setInterval(() => {
+          if (Math.random() < 0.3 && !this.brbActive) {
+            this.showRandomDonationAlert();
+          }
+        }, 30000);
+
+        setInterval(() => {
+          if (Math.random() < 0.2) {
+            this.triggerCelebration();
+          }
+        }, 45000);
+      }
+
+      showRandomDonationAlert() {
+        const donors = ['CardShark', 'PokerFace', 'ChipStack', 'JokerWild', 'AceHigh', 'BluffMaster'];
+        const messages = [
+          'All in on this stream! 🎰',
+          'Royal flush of entertainment! ♠️',
+          'Betting big on your success! 💎',
+          'House always wins with content like this! 🃏',
+          'Jackpot stream right here! 🎯'
+        ];
+
+        const amount = Math.floor(Math.random() * 50) + 5;
+        const donor = donors[Math.floor(Math.random() * donors.length)];
+        const message = messages[Math.floor(Math.random() * messages.length)];
+
+        this.showDonationAlert(amount, donor, message);
+      }
+
+      showDonationAlert(amount = 25, from = 'CardShark', message = 'All in on this amazing stream! 🎰') {
+        const alertFrame = document.getElementById('donationAlertFrame');
+        alertFrame.style.display = 'block';
+
+        const iframe = alertFrame.querySelector('iframe');
+        iframe.onload = () => {
+          try {
+            iframe.contentWindow.triggerDonation(amount, from, message);
+          } catch (e) {
+            console.log('Demo donation triggered');
+          }
+        };
+
+        setTimeout(() => {
+          alertFrame.style.display = 'none';
+        }, 6000);
+      }
+
+      triggerCelebration() {
+        console.log('🎉 Celebration effect triggered!');
+
+        const overlay = document.querySelector('.overlay-container');
+        overlay.style.animation = 'none';
+        overlay.style.filter = 'brightness(1.2) saturate(1.3)';
+
+        setTimeout(() => {
+          overlay.style.filter = '';
+        }, 1000);
+      }
+
+      showBRBScene() {
+        const brbScene = document.getElementById('brbScene');
+        const overlay = document.querySelector('.overlay-container');
+
+        if (!this.brbActive) {
+          brbScene.style.display = 'block';
+          overlay.style.opacity = '0.3';
+          this.brbActive = true;
+
+          setTimeout(() => {
+            this.hideBRBScene();
+          }, 10000);
+        } else {
+          this.hideBRBScene();
         }
+      }
 
-        class TwitchChatBox {
-            constructor() {
-                this.messages = [];
-                this.maxMessages = 50;
-                this.chatContainer = document.getElementById('chatMessages');
-                this.connectionStatus = document.getElementById('connectionStatus');
-                this.typingIndicator = document.getElementById('typingIndicator');
-                this.messageCount = 0;
-                
-                this.channelName = 'JustNeki';
-                
-                this.playSound = (type) => {
-                    console.log(`🔊 Playing ${type} sound effect`);
-                };
-                
-                this.initTwitchChat();
-                this.initVisualEffects();
-            }
+      hideBRBScene() {
+        const brbScene = document.getElementById('brbScene');
+        const overlay = document.querySelector('.overlay-container');
 
-            initVisualEffects() {
-                setInterval(() => {
-                    if (Math.random() < 0.3) {
-                        this.showTypingIndicator();
-                    }
-                }, 15000);
+        brbScene.style.display = 'none';
+        overlay.style.opacity = '1';
+        this.brbActive = false;
+      }
 
-                setInterval(() => {
-                    const header = document.querySelector('.chat-header');
-                    header.style.animation = 'none';
-                    setTimeout(() => {
-                        header.style.animation = '';
-                    }, 100);
-                }, 30000);
-            }
+      resetOverlay() {
+        location.reload();
+      }
 
-            showTypingIndicator() {
-                this.typingIndicator.style.opacity = '0.7';
-                setTimeout(() => {
-                    this.typingIndicator.style.opacity = '0';
-                }, 3000);
-            }
-
-            initTwitchChat() {
-                console.log('Inicializando cliente IRC nativo...');
-                
-                this.client = new TwitchIRCClient(this.channelName);
-
-                this.client.on('message', (channel, tags, message, self) => {
-                    this.addMessage(tags, message);
-                });
-
-                this.client.on('connected', () => {
-                    this.connectionStatus.classList.add('connected');
-                    console.log('Conectado al chat de Twitch');
-                });
-
-                this.client.on('disconnected', () => {
-                    this.connectionStatus.classList.remove('connected');
-                    console.log('Desconectado del chat de Twitch');
-                });
-
-                this.client.connect().then(() => {
-                    console.log('Conectado exitosamente al canal:', this.channelName);
-                }).catch((error) => {
-                    console.error('Error al conectar:', error);
-                    this.addDemoMessages();
-                });
-
-                /*setTimeout(() => {
-                    this.addDemoMessages();
-                }, 3000);*/
-            }
-
-            addMessage(tags, message) {
-                this.messageCount++;
-                const messageElement = this.createMessageElement(tags, message);
-                
-                const specialKeywords = ['!', 'looking cool', 'for real', 'awesome', 'phantom', 'joker'];
-                const hasSpecialKeyword = specialKeywords.some(keyword => 
-                    message.toLowerCase().includes(keyword.toLowerCase())
-                );
-                
-                if (tags.mod || tags.vip || hasSpecialKeyword || this.messageCount % 7 === 0) {
-                    messageElement.classList.add('special');
-                }
-                
-                this.chatContainer.appendChild(messageElement);
-                
-                this.playSound(messageElement.classList.contains('special') ? 'special' : 'message');
-
-                this.messages.push(messageElement);
-                if (this.messages.length > this.maxMessages) {
-                    const oldMessage = this.messages.shift();
-                    oldMessage.style.transition = 'all 0.5s ease-out';
-                    oldMessage.style.transform = 'translateX(-100%) scale(0.6) rotate(-10deg)';
-                    oldMessage.style.opacity = '0';
-                    setTimeout(() => oldMessage.remove(), 500);
-                }
-
-                this.smoothScrollToBottom();
-            }
-
-            smoothScrollToBottom() {
-                const scrollHeight = this.chatContainer.scrollHeight;
-                const height = this.chatContainer.clientHeight;
-                const maxScrollTop = scrollHeight - height;
-                
-                const startScrollTop = this.chatContainer.scrollTop;
-                const distance = maxScrollTop - startScrollTop;
-                const duration = 500;
-                let start = null;
-                
-                const step = (timestamp) => {
-                    if (!start) start = timestamp;
-                    const progress = Math.min((timestamp - start) / duration, 1);
-                    const easeInOut = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-                    
-                    this.chatContainer.scrollTop = startScrollTop + (distance * easeInOut);
-                    
-                    if (progress < 1) {
-                        requestAnimationFrame(step);
-                    }
-                };
-                
-                requestAnimationFrame(step);
-            }
-
-            createMessageElement(tags, message) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message';
-
-                if (tags.subscriber) messageDiv.classList.add('subscriber');
-                if (tags.mod) messageDiv.classList.add('moderator');
-                if (tags.badges && tags.badges.vip) messageDiv.classList.add('vip');
-
-                const usernameDiv = document.createElement('div');
-                usernameDiv.className = 'username';
-
-                const badgeDiv = document.createElement('div');
-                badgeDiv.className = 'username-badge';
-                
-                if (tags.subscriber) {
-                    badgeDiv.innerHTML = 'S';
-                } else if (tags.mod) {
-                    badgeDiv.innerHTML = 'M';
-                } else if (tags.badges && tags.badges.vip) {
-                    badgeDiv.innerHTML = 'V';
-                } else {
-                    badgeDiv.innerHTML = '●';
-                }
-
-                const usernameTextSpan = document.createElement('span');
-                usernameTextSpan.textContent = tags['display-name'] || tags.username;
-
-                usernameDiv.appendChild(badgeDiv);
-                usernameDiv.appendChild(usernameTextSpan);
-
-                const bubbleDiv = document.createElement('div');
-                bubbleDiv.className = 'message-bubble';
-
-                // Add timestamp
-                const timestampDiv = document.createElement('div');
-                timestampDiv.className = 'message-timestamp';
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
-                timestampDiv.textContent = timeString;
-
-                const messageTextDiv = document.createElement('div');
-                messageTextDiv.className = 'message-text';
-                messageTextDiv.textContent = message;
-
-                if (message.includes('?')) {
-                    const questionIcon = document.createElement('div');
-                    questionIcon.className = 'message-icon question-icon';
-                    questionIcon.innerHTML = '?';
-                    bubbleDiv.appendChild(questionIcon);
-                }
-
-                if (message.includes('!')) {
-                    const exclamationIcon = document.createElement('div');
-                    exclamationIcon.className = 'message-icon exclamation-icon';
-                    exclamationIcon.innerHTML = '!';
-                    bubbleDiv.appendChild(exclamationIcon);
-                }
-
-                if (message.toLowerCase().includes('cool') || message.toLowerCase().includes('awesome')) {
-                    bubbleDiv.classList.add('cool-message');
-                }
-
-                bubbleDiv.appendChild(usernameDiv);
-                bubbleDiv.appendChild(messageTextDiv);
-                bubbleDiv.appendChild(timestampDiv);
-
-                messageDiv.appendChild(bubbleDiv);
-
-                return messageDiv;
-            }
-
-            addDemoMessages() {
-                const demoMessages = [
-                    { username: 'PhantomThief', message: 'Looking cool, Joker! El chat está increíble 🎭', type: 'vip' },
-                    { username: 'MorganaP5', message: 'For real?! Este diseño es de otro nivel', type: 'mod' },
-                    { username: 'RyujiSakamoto', message: 'Effin\' awesome stream setup dude! 💀', type: 'subscriber' },
-                    { username: 'AnnTakamaki', message: 'El estilo MSM quedó perfecto ✨', type: 'subscriber' },
-                    { username: 'YusukeKitagawa', message: 'Such artistic beauty in this interface...', type: 'normal' },
-                    { username: 'MakotoNiijima', message: 'Excelente trabajo con el overlay 🌟', type: 'subscriber' },
-                    { username: 'FutabaSakura', message: 'Hacking into the chat! Nice UI design 💻', type: 'mod' },
-                    { username: 'HaruOkumura', message: 'This looks so professional! 🎨', type: 'normal' },
-                    { username: 'AkechiGoro', message: 'Impressive... very impressive indeed', type: 'vip' },
-                    { username: 'Kasumi', message: 'Senpai! The chat looks amazing! 💫', type: 'subscriber' }
-                ];
-
-                let delay = 2000;
-                demoMessages.forEach((demo, index) => {
-                    setTimeout(() => {
-                        const mockTags = {
-                            'display-name': demo.username,
-                            username: demo.username.toLowerCase(),
-                            subscriber: demo.type === 'subscriber',
-                            mod: demo.type === 'mod',
-                            badges: demo.type === 'vip' ? { vip: true } : null
-                        };
-                        this.addMessage(mockTags, demo.message);
-                        
-                        if (demo.username === 'PhantomThief' || demo.username === 'AkechiGoro') {
-                            this.triggerSpecialEffect();
-                        }
-                    }, delay + (index * 3000));
-                });
-            }
-
-            triggerSpecialEffect() {
-                const container = document.querySelector('.chat-container');
-                container.style.animation = 'none';
-                container.style.boxShadow = '0 0 50px rgba(255, 0, 0, 1), inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 100px rgba(255, 0, 0, 0.8)';
-                
-                setTimeout(() => {
-                    container.style.animation = '';
-                    container.style.boxShadow = '';
-                }, 1000);
-            }
+      toggleFullscreen() {
+        if (!this.isFullscreen) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          }
+          this.isFullscreen = true;
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+          this.isFullscreen = false;
         }
+      }
 
-        function setupOBSMode() {
-            document.body.style.background = 'transparent';
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.location.search.includes('obs=true')) {
-                setupOBSMode();
-            }
-
-            console.log('Iniciando TwitchChatBox con cliente IRC nativo...');
-            new TwitchChatBox();
+      setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          switch (e.key) {
+            case 'F11':
+              e.preventDefault();
+              this.toggleFullscreen();
+              break;
+            case 'b':
+            case 'B':
+              if (e.ctrlKey) {
+                e.preventDefault();
+                this.showBRBScene();
+              }
+              break;
+            case 'd':
+            case 'D':
+              if (e.ctrlKey) {
+                e.preventDefault();
+                this.showRandomDonationAlert();
+              }
+              break;
+            case 'c':
+            case 'C':
+              if (e.ctrlKey) {
+                e.preventDefault();
+                this.triggerCelebration();
+              }
+              break;
+          }
         });
+      }
+    }
 
-        function changeChannel(newChannel) {
-            console.log(`Cambiando a canal: ${newChannel}`);
-        }
-    </script>
+    function showDonationAlert() {
+      window.balatroOverlay.showRandomDonationAlert();
+    }
+
+    function triggerCelebration() {
+      window.balatroOverlay.triggerCelebration();
+    }
+
+    function showBRBScene() {
+      window.balatroOverlay.showBRBScene();
+    }
+
+    function resetOverlay() {
+      window.balatroOverlay.resetOverlay();
+    }
+
+    function toggleFullscreen() {
+      window.balatroOverlay.toggleFullscreen();
+    }
+
+    window.balatroOverlay = new BalatroOverlay();
+  </script>
 </body>
+
 </html>

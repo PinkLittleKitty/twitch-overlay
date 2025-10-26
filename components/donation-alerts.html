@@ -12,14 +12,15 @@
             box-sizing: border-box;
         }
 
-        body {
+        .balatro-donation-alerts {
             font-family: 'Inter', sans-serif;
             background: transparent;
             overflow: hidden;
-            height: 100vh;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            filter: contrast(1.1) saturate(1.2);
         }
 
         .alert-container {
@@ -37,31 +38,29 @@
         }
 
         .donation-alert {
-            background: #f5f1e8;
-            border-radius: 30px;
-            padding: 25px;
+            background: #1a1625;
+            border-radius: 8px;
+            padding: 20px;
             text-align: center;
             position: relative;
             box-shadow: 
-                0 15px 40px rgba(0, 0, 0, 0.2),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
-            border: 3px solid #d4c4a8;
+                0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 3px solid #4a4458;
         }
 
         .bell-icon {
-            width: 40px;
-            height: 40px;
-            background: #f4d03f;
-            border-radius: 50%;
-            margin: 0 auto 15px;
+            width: 32px;
+            height: 32px;
+            background: #4a4458;
+            border: 2px solid #6b5b73;
+            border-radius: 4px;
+            margin: 0 auto 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            color: #8b7355;
-            box-shadow: 
-                0 4px 8px rgba(244, 208, 63, 0.3),
-                inset 0 2px 0 rgba(255, 255, 255, 0.4);
+            font-size: 16px;
+            color: #d4af37;
             animation: bellRing 0.5s ease-in-out;
         }
 
@@ -72,28 +71,30 @@
         }
 
         .donation-amount {
-            color: #8b7355;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
+            color: #d4af37;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
 
         .donation-from {
-            color: #a8c686;
-            font-size: 14px;
+            color: #8b7d6b;
+            font-size: 12px;
             font-weight: 500;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .donation-message {
-            color: #8b7355;
-            font-size: 12px;
+            color: #c9b99b;
+            font-size: 11px;
             line-height: 1.4;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 10px 15px;
-            border-radius: 15px;
-            border: 1px solid #d4c4a8;
-            max-height: 60px;
+            background: #2a2438;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #4a4458;
+            max-height: 50px;
             overflow: hidden;
         }
 
@@ -108,11 +109,12 @@
 
         .sparkle {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #f4d03f;
-            border-radius: 50%;
+            width: 4px;
+            height: 4px;
+            background: #d4af37;
+            border-radius: 1px;
             animation: sparkleFloat 2s ease-in-out infinite;
+            opacity: 0.6;
         }
 
         .sparkle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
@@ -133,28 +135,32 @@
         }
 
         .large-donation {
-            background: linear-gradient(135deg, #f4d03f, #f39c12);
-            color: white;
+            background: #3d2f4a;
+            border-color: #d4af37;
+            box-shadow: 
+                0 4px 25px rgba(212, 175, 55, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .large-donation .donation-amount {
-            color: white;
-            font-size: 28px;
+            color: #d4af37;
+            font-size: 24px;
         }
 
         .large-donation .donation-from {
-            color: rgba(255, 255, 255, 0.9);
+            color: #d4af37;
         }
 
         .large-donation .donation-message {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border-color: rgba(255, 255, 255, 0.3);
+            background: #2a2438;
+            color: #e6d7b8;
+            border-color: #d4af37;
         }
-    </style>
+</style>
 </head>
 <body>
-    <div class="alert-container" id="alertContainer">
+    <div class="balatro-card balatro-donation-alerts">
+        <div class="alert-container" id="alertContainer">
         <div class="donation-alert" id="donationAlert">
             <div class="sparkles">
                 <div class="sparkle"></div>
@@ -163,11 +169,12 @@
                 <div class="sparkle"></div>
                 <div class="sparkle"></div>
             </div>
-            <div class="bell-icon">🔔</div>
+            <div class="bell-icon">$</div>
             <div class="donation-amount" id="donationAmount">$5.00</div>
-            <div class="donation-from" id="donationFrom">from TomNook</div>
-            <div class="donation-message" id="donationMessage">Thanks for the amazing stream! Keep up the great work!</div>
+            <div class="donation-from" id="donationFrom">from Viewer</div>
+            <div class="donation-message" id="donationMessage">Thanks for the great stream!</div>
         </div>
+    </div>
     </div>
 
     <script>
@@ -183,7 +190,7 @@
                 this.queue = [];
                 
                 // Demo donations for testing
-                //this.startDemo();
+                this.startDemo();
             }
 
             showDonation(amount, from, message = '') {
@@ -200,25 +207,20 @@
             displayDonation({ amount, from, message }) {
                 this.isShowing = true;
                 
-                // Update content
                 this.amountElement.textContent = `$${amount.toFixed(2)}`;
                 this.fromElement.textContent = `from ${from}`;
                 this.messageElement.textContent = message || 'Thank you for the donation!';
                 
-                // Add special styling for large donations
                 if (amount >= 20) {
                     this.donationAlert.classList.add('large-donation');
                 } else {
                     this.donationAlert.classList.remove('large-donation');
                 }
                 
-                // Show alert
                 this.alertContainer.classList.add('show');
                 
-                // Play sound effect (placeholder)
                 this.playDonationSound(amount);
                 
-                // Hide after 5 seconds
                 setTimeout(() => {
                     this.hideAlert();
                 }, 5000);
@@ -230,7 +232,6 @@
                 setTimeout(() => {
                     this.isShowing = false;
                     
-                    // Show next donation if any in queue
                     if (this.queue.length > 0) {
                         const nextDonation = this.queue.shift();
                         setTimeout(() => {
@@ -241,7 +242,6 @@
             }
 
             playDonationSound(amount) {
-                // Placeholder for sound effects
                 console.log(`🔊 Playing donation sound for $${amount}`);
                 if (amount >= 20) {
                     console.log('🎉 Large donation sound!');
@@ -250,11 +250,11 @@
 
             startDemo() {
                 const demoDonations = [
-                    { amount: 5, from: 'Isabelle', message: 'Love your island tours!' },
-                    { amount: 10, from: 'KKSlider', message: 'Here\'s some bells for your next concert!' },
-                    { amount: 25, from: 'TomNook', message: 'Excellent work on the stream, yes yes!' },
-                    { amount: 3, from: 'Blathers', message: 'Fascinating content as always!' },
-                    { amount: 50, from: 'Celeste', message: 'Wishing upon a star for your success! ⭐' }
+                    { amount: 5, from: 'CardShark', message: 'All in on this stream! 🎰' },
+                    { amount: 10, from: 'PokerFace', message: 'Royal flush of entertainment! ♠️' },
+                    { amount: 25, from: 'ChipStack', message: 'Betting big on your success! 💎' },
+                    { amount: 3, from: 'JokerWild', message: 'House always wins with content like this! 🃏' },
+                    { amount: 50, from: 'AceHigh', message: 'Jackpot stream right here! 🎯' }
                 ];
 
                 let delay = 3000;
@@ -266,16 +266,13 @@
             }
         }
 
-        // Global function to trigger donations (for external integration)
         window.triggerDonation = function(amount, from, message) {
             if (window.donationAlerts) {
                 window.donationAlerts.showDonation(amount, from, message);
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            window.donationAlerts = new DonationAlerts();
-        });
+        window.donationAlerts = new DonationAlerts();
     </script>
 </body>
 </html>
