@@ -23,12 +23,13 @@
         .info-container {
             width: 280px;
             height: 200px;
-            background: #f5f1e8;
-            border-radius: 25px;
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border-radius: 8px;
+            border: 1px solid #333;
             position: relative;
             box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.15),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+                0 10px 30px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
             padding: 20px;
         }
 
@@ -41,21 +42,22 @@
         .nook-icon {
             width: 24px;
             height: 24px;
-            background: #f4d03f;
-            border-radius: 50%;
+            background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
+            border-radius: 4px;
+            border: 1px solid #555;
             margin-right: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
-            color: #8b7355;
+            color: #e0e0e0;
             box-shadow:
-                0 2px 6px rgba(244, 208, 63, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                0 2px 6px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .title {
-            color: #8b7355;
+            color: #e0e0e0;
             font-size: 16px;
             font-weight: 600;
         }
@@ -67,18 +69,18 @@
         }
 
         .info-item {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(42, 42, 42, 0.8);
             padding: 10px 15px;
-            border-radius: 15px;
-            border: 1px solid #d4c4a8;
+            border-radius: 6px;
+            border: 1px solid #444;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(139, 115, 85, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
 
         .info-label {
-            color: #8b7355;
+            color: #b0b0b0;
             font-size: 12px;
             font-weight: 500;
             display: flex;
@@ -87,7 +89,7 @@
         }
 
         .info-value {
-            color: #a8c686;
+            color: #e0e0e0;
             font-size: 12px;
             font-weight: 600;
         }
@@ -124,23 +126,24 @@
         .goal-progress {
             width: 100%;
             height: 4px;
-            background: rgba(212, 196, 168, 0.3);
+            background: #333;
             border-radius: 2px;
             overflow: hidden;
             margin-top: 5px;
+            border: 1px solid #444;
         }
 
         .goal-bar {
             height: 100%;
-            background: linear-gradient(90deg, #a8c686, #8fb069);
+            background: linear-gradient(90deg, #666, #888);
             border-radius: 2px;
             width: 65%;
             transition: width 0.5s ease;
         }
 
         .special-event {
-            background: linear-gradient(135deg, #e8f4fd, #d4e9f7);
-            border-color: #b8d4ea;
+            background: linear-gradient(135deg, #3a2a4a, #2a1a3a);
+            border-color: #6a4a8a;
             animation: specialGlow 3s ease-in-out infinite;
         }
 
@@ -148,11 +151,11 @@
 
             0%,
             100% {
-                box-shadow: 0 2px 5px rgba(139, 115, 85, 0.1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             }
 
             50% {
-                box-shadow: 0 4px 15px rgba(184, 212, 234, 0.3);
+                box-shadow: 0 4px 15px rgba(106, 74, 138, 0.4);
             }
         }
 
@@ -177,8 +180,8 @@
 <body>
     <div class="info-container">
         <div class="header">
-            <div class="nook-icon">🏝️</div>
-            <div class="title">Info</div>
+            <div class="nook-icon">⚫</div>
+            <div class="title">Void Stats</div>
         </div>
         <div class="info-grid">
             <div class="info-item">
@@ -232,7 +235,6 @@
                 this.goalTarget = 100;
 
                 this.startUpdates();
-                //this.simulateViewerChanges();
                 this.cycleWeather();
             }
 
@@ -269,7 +271,6 @@
             }
 
             startUpdates() {
-                // Update uptime every second
                 setInterval(() => {
                     this.updateUptime();
                 }, 1000);
@@ -281,17 +282,14 @@
 
             simulateViewerChanges() {
                 setInterval(() => {
-                    // Simulate viewer count changes
-                    const change = Math.floor(Math.random() * 10) - 5; // -5 to +5
+                    const change = Math.floor(Math.random() * 10) - 5;
                     const newCount = Math.max(50, this.currentViewers + change);
                     this.updateViewers(newCount);
 
-                    // Occasionally update followers
                     if (Math.random() < 0.1) {
                         this.updateFollowers(this.currentFollowers + 1);
                     }
 
-                    // Occasionally update goal
                     if (Math.random() < 0.05) {
                         this.updateGoal(Math.min(this.goalCurrent + 1, this.goalTarget));
                     }
@@ -318,11 +316,10 @@
                     this.weather.textContent = weather.name;
 
                     currentIndex = (currentIndex + 1) % weatherOptions.length;
-                }, 30000); // Change every 30 seconds
+                }, 30000);
             }
         }
 
-        // Global functions for external integration
         window.updateStreamViewers = function (count) {
             if (window.streamInfo) {
                 window.streamInfo.updateViewers(count);

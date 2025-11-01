@@ -22,27 +22,26 @@
         .chat-container {
             width: 380px;
             height: 700px;
-            background: #f5f1e8;
-            border: none;
-            border-radius: 60px;
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 2px solid #333;
+            border-radius: 15px;
             position: relative;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
             box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.15),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+                0 15px 50px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         /* Status bar area */
         .chat-container::before {
-            content: '••• 2:51 AM ⚙';
             position: absolute;
             top: 20px;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 12px;
-            color: #8b7355;
+            color: #666;
             font-weight: 500;
             z-index: 10;
         }
@@ -52,19 +51,20 @@
         .chat-header {
             background: transparent;
             padding: 50px 20px 20px 20px;
-            border-bottom: none;
+            border-bottom: 1px solid #333;
             position: relative;
-            border-radius: 60px 60px 0 0;
+            border-radius: 15px 15px 0 0;
         }
 
         .app-title {
-            color: #8b7355;
+            color: #e0e0e0;
             font-size: 24px;
             font-weight: 600;
             text-align: center;
             position: relative;
             z-index: 1;
             margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(224, 224, 224, 0.3);
         }
 
 
@@ -74,7 +74,7 @@
             padding: 0 20px 20px 20px;
             background: transparent;
             position: relative;
-            border-radius: 0 0 60px 60px;
+            border-radius: 0 0 15px 15px;
         }
 
         .message {
@@ -100,85 +100,72 @@
             height: 14px;
         }
 
-        /* Animal Crossing cloud-shaped text bubbles */
+        /* Hollow Knight dark stone-like text bubbles */
         .message-bubble {
             position: relative;
             padding: 16px 20px;
-            background: #ffffff;
-            border: 2px solid #d4c4a8;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #444;
             margin: 12px 0;
             max-width: 85%;
-            border-radius: 25px;
+            border-radius: 8px;
             box-shadow: 
-                0 3px 8px rgba(139, 115, 85, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+                0 4px 12px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
             overflow: visible;
         }
 
-        /* Main cloud bumps */
+        /* Void essence glow effect */
         .message-bubble::before {
             content: '';
             position: absolute;
-            top: -8px;
-            left: 18px;
-            width: 16px;
-            height: 16px;
-            background: #ffffff;
-            border: 2px solid #d4c4a8;
-            border-radius: 50%;
-            border-bottom: none;
-            z-index: 2;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, transparent, rgba(100, 100, 255, 0.1), transparent);
+            border-radius: 8px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .message-bubble::after {
             content: '';
-            position: absolute;
-            top: -6px;
-            left: 32px;
-            width: 12px;
-            height: 12px;
-            background: #ffffff;
-            border: 2px solid #d4c4a8;
-            border-radius: 50%;
-            border-bottom: none;
-            z-index: 2;
+            display: none;
         }
 
-        /* Special cloud bubbles with different colors */
+        /* Special void-touched bubbles */
         .message.special .message-bubble,
         .message.moderator .message-bubble,
         .message.vip .message-bubble {
-            background: #e8f4fd;
-            border-color: #b8d4ea;
+            background: linear-gradient(145deg, #3a2a4a, #2a1a3a);
+            border-color: #6a4a8a;
             box-shadow: 
-                0 3px 8px rgba(184, 212, 234, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+                0 4px 15px rgba(106, 74, 138, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .message.special .message-bubble::before,
         .message.moderator .message-bubble::before,
         .message.vip .message-bubble::before {
-            background: #e8f4fd;
-            border-color: #b8d4ea;
-        }
-
-        .message.special .message-bubble::after,
-        .message.moderator .message-bubble::after,
-        .message.vip .message-bubble::after {
-            background: #e8f4fd;
-            border-color: #b8d4ea;
+            opacity: 1;
         }
 
         .message-bubble:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 
-                0 5px 15px rgba(139, 115, 85, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+                0 6px 20px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             transition: all 0.2s ease;
         }
 
+        .message-bubble:hover::before {
+            opacity: 1;
+        }
+
         .username {
-            color: #8b7355;
+            color: #b0b0b0;
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 12px;
@@ -192,26 +179,26 @@
         .username-badge {
             width: 18px;
             height: 18px;
-            border: none;
+            border: 1px solid #555;
             margin-right: 8px;
-            background: #a8c686;
+            background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 9px;
-            color: #ffffff;
+            color: #e0e0e0;
             font-weight: bold;
             position: relative;
             left: 0;
             top: 0;
-            border-radius: 50%;
+            border-radius: 3px;
             box-shadow: 
-                0 2px 4px rgba(168, 198, 134, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                0 2px 6px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .message-text {
-            color: #8b7355;
+            color: #d0d0d0;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             font-weight: 500;
@@ -222,14 +209,14 @@
         .message.special .message-text,
         .message.moderator .message-text,
         .message.vip .message-text {
-            color: #6b8db5;
+            color: #c0a0ff;
             font-weight: 500;
         }
 
         .message.special .username,
         .message.moderator .username,
         .message.vip .username {
-            color: #6b8db5;
+            color: #c0a0ff;
         }
 
         /* Timestamp styling */
@@ -237,32 +224,36 @@
             position: absolute;
             top: -22px;
             right: 8px;
-            background: #d4c4a8;
-            color: #8b7355;
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            color: #888;
             padding: 4px 8px;
             font-size: 9px;
             font-weight: 500;
-            border-radius: 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
             box-shadow: 
-                0 2px 4px rgba(212, 196, 168, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+                0 2px 6px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
             z-index: 10;
             white-space: nowrap;
         }
 
         .subscriber .username-badge {
-            background: #f4d03f;
-            color: #8b7355;
+            background: linear-gradient(145deg, #6a4a8a, #4a2a6a);
+            color: #e0e0e0;
+            border-color: #8a6aaa;
         }
 
         .moderator .username-badge {
-            background: #58d68d;
-            color: #ffffff;
+            background: linear-gradient(145deg, #4a6a4a, #2a4a2a);
+            color: #e0e0e0;
+            border-color: #6a8a6a;
         }
 
         .vip .username-badge {
-            background: #ec7063;
-            color: #ffffff;
+            background: linear-gradient(145deg, #8a4a4a, #6a2a2a);
+            color: #e0e0e0;
+            border-color: #aa6a6a;
         }
 
         @keyframes messageBounceIn {
@@ -293,7 +284,7 @@
             position: absolute;
             bottom: 15px;
             left: 25px;
-            color: #a8c686;
+            color: #666;
             font-size: 11px;
             font-style: italic;
             opacity: 0;
@@ -321,19 +312,20 @@
             right: 30px;
             width: 8px;
             height: 8px;
-            background: #ec7063;
+            background: #8a4a4a;
             z-index: 10;
-            border-radius: 50%;
+            border-radius: 2px;
             box-shadow: 
-                0 2px 4px rgba(236, 112, 99, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .connection-status.connected {
-            background: #58d68d;
+            background: #4a8a4a;
             box-shadow: 
-                0 2px 4px rgba(88, 214, 141, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 0 8px rgba(74, 138, 74, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .emote {
@@ -357,7 +349,7 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <div class="app-title">Nookófono</div>
+            <div class="app-title">Chat</div>
             <div class="connection-status" id="connectionStatus"></div>
         </div>
         <div class="chat-messages" id="chatMessages">
