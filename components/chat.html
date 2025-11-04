@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -336,6 +337,65 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
 
+        /* TTS Controls */
+        .tts-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 15;
+        }
+
+        .tts-btn {
+            width: 35px;
+            height: 35px;
+            background: #d4c4a8;
+            border: 2px solid #a8c686;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #8b7355;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(212, 196, 168, 0.3);
+        }
+
+        .tts-btn:hover {
+            background: #a8c686;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .tts-btn.active {
+            background: #a8c686;
+            color: white;
+            border-color: #8b7355;
+        }
+
+        .speaking-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #f4d03f;
+            border-radius: 50%;
+            animation: pulse 1s ease-in-out infinite;
+            display: none;
+        }
+
+        .speaking-indicator.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
         .emote {
             height: 20px;
             width: auto;
@@ -361,6 +421,13 @@
             <div class="connection-status" id="connectionStatus"></div>
         </div>
         <div class="chat-messages" id="chatMessages">
+        </div>
+        
+        <div class="tts-controls">
+            <button class="tts-btn" id="ttsToggle" title="Toggle Animal Crossing TTS">
+                🔊
+                <div class="speaking-indicator" id="speakingIndicator"></div>
+            </button>
         </div>
     </div>
 
@@ -472,10 +539,16 @@
                 this.maxMessages = 50;
                 this.chatContainer = document.getElementById('chatMessages');
                 this.connectionStatus = document.getElementById('connectionStatus');
-                this.typingIndicator = document.getElementById('typingIndicator');
                 this.messageCount = 0;
                 
                 this.channelName = 'JustNeki';
+                
+                this.ttsEnabled = true;
+                this.isSpeaking = false;
+                this.messageQueue = [];
+                this.ttsToggle = document.getElementById('ttsToggle');
+                this.speakingIndicator = document.getElementById('speakingIndicator');
+
                 
                 this.playSound = (type) => {
                     console.log(`🔊 Playing ${type} sound effect`);
@@ -483,15 +556,10 @@
                 
                 this.initTwitchChat();
                 this.initVisualEffects();
+                this.initTTS();
             }
 
             initVisualEffects() {
-                setInterval(() => {
-                    if (Math.random() < 0.3) {
-                        this.showTypingIndicator();
-                    }
-                }, 15000);
-
                 setInterval(() => {
                     const header = document.querySelector('.chat-header');
                     header.style.animation = 'none';
@@ -500,14 +568,7 @@
                     }, 100);
                 }, 30000);
             }
-
-            showTypingIndicator() {
-                this.typingIndicator.style.opacity = '0.7';
-                setTimeout(() => {
-                    this.typingIndicator.style.opacity = '0';
-                }, 3000);
-            }
-
+            
             initTwitchChat() {
                 console.log('Inicializando cliente IRC nativo...');
                 
@@ -555,6 +616,10 @@
                 this.chatContainer.appendChild(messageElement);
                 
                 this.playSound(messageElement.classList.contains('special') ? 'special' : 'message');
+
+                if (this.ttsEnabled && message.trim()) {
+                    this.addToTTSQueue(tags, message);
+                }
 
                 this.messages.push(messageElement);
                 if (this.messages.length > this.maxMessages) {
@@ -626,7 +691,6 @@
                 const bubbleDiv = document.createElement('div');
                 bubbleDiv.className = 'message-bubble';
 
-                // Add timestamp
                 const timestampDiv = document.createElement('div');
                 timestampDiv.className = 'message-timestamp';
                 const now = new Date();
@@ -710,6 +774,168 @@
                     container.style.animation = '';
                     container.style.boxShadow = '';
                 }, 1000);
+            }
+
+            initTTS() {
+                this.ttsToggle.addEventListener('click', () => {
+                    this.toggleTTS();
+                });
+            }
+
+            toggleTTS() {
+                this.ttsEnabled = !this.ttsEnabled;
+                
+                if (this.ttsEnabled) {
+                    this.ttsToggle.classList.add('active');
+                    this.ttsToggle.title = 'Disable Animal Crossing TTS';
+                } else {
+                    this.ttsToggle.classList.remove('active');
+                    this.ttsToggle.title = 'Enable Animal Crossing TTS';
+                    this.stopSpeaking();
+                    this.messageQueue = [];
+                }
+                
+                this.updateTTSButtonState();
+            }
+
+            addToTTSQueue(tags, message) {
+                let cleanMessage = message
+                    .replace(/https?:\/\/[^\s]+/g, 'link')
+                    .replace(/[^\w\s.,!?áéíóúñü]/gi, ' ')
+                    .trim();
+                
+                if (cleanMessage.length > 150) {
+                    cleanMessage = cleanMessage.substring(0, 150) + '...';
+                }
+                
+                if (cleanMessage) {
+                    this.messageQueue.push({ tags, message: cleanMessage });
+                    this.processTTSQueue();
+                }
+            }
+
+            processTTSQueue() {
+                if (this.isSpeaking || this.messageQueue.length === 0 || !this.ttsEnabled) {
+                    return;
+                }
+                
+                const { tags, message } = this.messageQueue.shift();
+                this.speakAnimalese(tags, message);
+            }
+
+            speakAnimalese(tags, message) {
+                this.isSpeaking = true;
+                this.speakingIndicator.classList.add('active');
+                
+                this.generateAnimalese(message, this.getCharacterSettings(tags));
+            }
+
+            getCharacterSettings(tags) {
+                if (tags.mod) {
+                    return { pitch: 1.2, speed: 1.1, voice: 'female' };
+                }
+                if (tags.subscriber) {
+                    return { pitch: 0.8, speed: 0.9, voice: 'male' };
+                }
+                if (tags.vip) {
+                    return { pitch: 1.1, speed: 1.0, voice: 'female' };
+                }
+                return { pitch: 1.0, speed: 1.0, voice: 'female' };
+            }
+
+            generateAnimalese(text, settings) {
+                const letters = this.textToLetters(text);
+                
+                if (letters.length === 0) {
+                    this.finishSpeaking();
+                    return;
+                }
+                
+                let letterIndex = 0;
+                
+                const playNextLetter = () => {
+                    if (letterIndex >= letters.length || !this.isSpeaking) {
+                        this.finishSpeaking();
+                        return;
+                    }
+                    
+                    const letter = letters[letterIndex];
+                    this.playAuthenticAnimalese(letter, settings);
+                    
+                    letterIndex++;
+                    const delay = letter.type === 'pause' ? 150 : 80;
+                    setTimeout(playNextLetter, delay / settings.speed);
+                };
+                
+                playNextLetter();
+            }
+
+            textToLetters(text) {
+                const cleanText = text.toLowerCase().replace(/[^a-z\s]/g, '');
+                const letters = [];
+                
+                for (let i = 0; i < cleanText.length; i++) {
+                    const char = cleanText[i];
+                    if (char === ' ') {
+                        letters.push({ type: 'pause' });
+                    } else if (char >= 'a' && char <= 'z') {
+                        letters.push({ type: 'letter', char: char });
+                    }
+                }
+                
+                return letters;
+            }
+
+            async playAuthenticAnimalese(letter, settings) {
+                if (!this.isSpeaking) return;
+                
+                if (letter.type === 'pause') return;
+                
+                try {
+                    const voiceFolder = settings.voice === 'male' ? 'male' : '';
+                    const audioPath = voiceFolder ? `audio/${voiceFolder}/${letter.char}.aac` : `audio/${letter.char}.aac`;
+                    
+                    const audio = new Audio(audioPath);
+                    
+                    audio.volume = 0.4;
+                    audio.playbackRate = settings.pitch;
+                    
+                    audio.playbackRate += (Math.random() - 0.5) * 0.05;
+                    
+                    audio.play().catch(error => {
+                        console.log(`Could not play audio for letter: ${letter.char}`, error);
+                    });
+                    
+                } catch (error) {
+                    console.log(`Could not play audio for letter: ${letter.char}`, error);
+                }
+            }
+
+
+
+            stopSpeaking() {
+                this.isSpeaking = false;
+                this.speakingIndicator.classList.remove('active');
+            }
+
+
+
+            finishSpeaking() {
+                this.stopSpeaking();
+                
+                setTimeout(() => {
+                    this.processTTSQueue();
+                }, 500);
+            }
+
+            updateTTSButtonState() {
+                if (this.ttsEnabled) {
+                    this.ttsToggle.classList.add('active');
+                    this.ttsToggle.title = 'Disable Animal Crossing TTS';
+                } else {
+                    this.ttsToggle.classList.remove('active');
+                    this.ttsToggle.title = 'Enable Animal Crossing TTS';
+                }
             }
         }
 
