@@ -780,6 +780,8 @@
                 this.ttsToggle.addEventListener('click', () => {
                     this.toggleTTS();
                 });
+                
+                this.updateTTSButtonState();
             }
 
             toggleTTS() {
@@ -794,8 +796,6 @@
                     this.stopSpeaking();
                     this.messageQueue = [];
                 }
-                
-                this.updateTTSButtonState();
             }
 
             addToTTSQueue(tags, message) {
