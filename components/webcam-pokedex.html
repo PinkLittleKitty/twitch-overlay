@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex frame</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', monospace;
+            background: transparent;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pokedex-frame {
+            width: 300px;
+            height: 500px;
+            background: linear-gradient(145deg, #dc2626 0%, #b91c1c 100%);
+            border: 6px solid #1f2937;
+            border-radius: 20px;
+            position: relative;
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                inset 3px 3px 0 rgba(255, 255, 255, 0.2),
+                inset -3px -3px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .top-section {
+            padding: 15px 20px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .big-light {
+            width: 35px;
+            height: 35px;
+            background: radial-gradient(circle, #3b82f6 0%, #1e40af 70%, #1e3a8a 100%);
+            border: 3px solid #1f2937;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                0 0 20px rgba(59, 130, 246, 0.6),
+                inset 3px 3px 0 rgba(255, 255, 255, 0.3),
+                inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .big-light::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+
+        .small-lights {
+            display: flex;
+            gap: 8px;
+        }
+
+        .small-light {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #1f2937;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .small-light.red {
+            background: radial-gradient(circle, #ef4444 0%, #dc2626 100%);
+        }
+
+        .small-light.yellow {
+            background: radial-gradient(circle, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .small-light.green {
+            background: radial-gradient(circle, #22c55e 0%, #16a34a 100%);
+        }
+
+        .main-screen {
+            margin: 0 20px 15px 20px;
+            height: 160px;
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            border: 4px solid #1f2937;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 4px 4px 0 rgba(0, 0, 0, 0.5),
+                inset -2px -2px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .screen-bezel {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 2px solid #374151;
+            border-radius: 4px;
+            background: linear-gradient(145deg, #111827 0%, #1f2937 100%);
+        }
+
+        .screen-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(59, 130, 246, 0.05) 2px,
+                    rgba(59, 130, 246, 0.05) 4px
+                );
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .webcam-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #22c55e;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 3;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            font-family: monospace;
+        }
+
+        .pokemon-team-section {
+            margin: 0 20px 15px 20px;
+            height: 250px;
+            background: #c7d323;
+            border: 4px solid #1e2124;
+            border-radius: 0;
+            position: relative;
+            padding: 8px;
+            box-shadow: 
+                inset 3px 3px 0 rgba(0, 0, 0, 0.4),
+                inset -2px -2px 0 rgba(255, 255, 255, 0.3);
+            image-rendering: pixelated;
+        }
+
+        .team-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .pokemon-entry {
+            display: flex;
+            align-items: center;
+            background: transparent;
+            padding: 2px 0;
+            height: 36px;
+            position: relative;
+        }
+
+        .pokemon-sprite {
+            width: 32px;
+            height: 32px;
+            background: #8bac0f;
+            border: 1px solid #1e2124;
+            margin-right: 8px;
+            image-rendering: pixelated;
+            flex-shrink: 0;
+        }
+
+        .pokemon-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pokemon-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pokemon-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: #1e2124;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .pokemon-hp-numbers {
+            font-size: 10px;
+            font-weight: 700;
+            color: #1e2124;
+            font-family: monospace;
+        }
+
+        .pokemon-level-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pokemon-level {
+            font-size: 9px;
+            font-weight: 600;
+            color: #1e2124;
+            font-family: monospace;
+        }
+
+        .hp-bar-container {
+            flex: 1;
+            height: 6px;
+            background: #1e2124;
+            border: 1px solid #1e2124;
+            position: relative;
+        }
+
+        .hp-bar {
+            height: 100%;
+            background: #22c55e;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .hp-bar.low {
+            background: #ef4444;
+        }
+
+        .hp-bar.medium {
+            background: #f59e0b;
+        }
+
+        .pokemon-placeholder {
+            color: #22c55e;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            font-family: monospace;
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+
+        .hinge-line {
+            height: 3px;
+            background: linear-gradient(90deg, #1f2937 0%, #374151 50%, #1f2937 100%);
+            margin: 0 20px;
+            border-radius: 2px;
+            box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .bottom-section {
+            padding: 8px 20px;
+            height: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .speaker-grille {
+            width: 100%;
+            height: 18px;
+            background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+            border: 2px solid #374151;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            position: relative;
+            box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .speaker-grille::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            right: 10px;
+            height: 1px;
+            background: repeating-linear-gradient(
+                90deg,
+                #374151 0px,
+                #374151 3px,
+                transparent 3px,
+                transparent 6px
+            );
+            transform: translateY(-50%);
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .control-button {
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(145deg, #1e40af 0%, #1e3a8a 100%);
+            border: 2px solid #1f2937;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 
+                1px 1px 0 rgba(0, 0, 0, 0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .control-button:hover {
+            background: linear-gradient(145deg, #3b82f6 0%, #1e40af 100%);
+            transform: translateY(1px);
+            box-shadow: 
+                1px 1px 0 rgba(0, 0, 0, 0.3),
+                inset 2px 2px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .control-button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0px 0px 0 rgba(0, 0, 0, 0.3),
+                inset 3px 3px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .d-pad {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .d-pad-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(145deg, #374151 0%, #1f2937 100%);
+            border: 1px solid #111827;
+            border-radius: 3px;
+            box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .d-pad-arm {
+            position: absolute;
+            background: linear-gradient(145deg, #374151 0%, #1f2937 100%);
+            border: 2px solid #111827;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .d-pad-arm:hover {
+            background: linear-gradient(145deg, #4b5563 0%, #374151 100%);
+        }
+
+        .d-pad-horizontal {
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 12px;
+            transform: translateY(-50%);
+            border-radius: 6px;
+        }
+
+        .d-pad-vertical {
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+            transform: translateX(-50%);
+            border-radius: 6px;
+        }
+
+        .status-display {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #22c55e;
+            padding: 3px 6px;
+            font-size: 7px;
+            color: #22c55e;
+            font-family: monospace;
+            text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+            z-index: 3;
+            border-radius: 2px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 20px rgba(59, 130, 246, 0.6),
+                    inset 3px 3px 0 rgba(255, 255, 255, 0.3),
+                    inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 30px rgba(59, 130, 246, 0.8),
+                    inset 3px 3px 0 rgba(255, 255, 255, 0.4),
+                    inset -2px -2px 0 rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 30px rgba(34, 197, 94, 0.4); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pokedex-frame" id="pokedexFrame">
+        <div class="top-section">
+            <div class="big-light" id="mainLight"></div>
+            <div class="small-lights">
+                <div class="small-light red" id="redLight"></div>
+                <div class="small-light yellow" id="yellowLight"></div>
+                <div class="small-light green" id="greenLight"></div>
+            </div>
+        </div>
+        
+        <div class="main-screen">
+            <div class="screen-bezel"></div>
+            <div class="screen-overlay"></div>
+        </div>
+        
+        <div class="pokemon-team-section">
+            <!-- PokéLink team display will go here -->
+        </div>
+        
+        <div class="hinge-line"></div>
+    </div>
+
+    <script>
+        class ClassicPokedex {
+            constructor() {
+                this.pokedexFrame = document.getElementById('pokedexFrame');
+                this.statusDisplay = document.getElementById('statusDisplay');
+                this.mainLight = document.getElementById('mainLight');
+                this.redLight = document.getElementById('redLight');
+                this.yellowLight = document.getElementById('yellowLight');
+                this.greenLight = document.getElementById('greenLight');
+                
+                this.btn1 = document.getElementById('btn1');
+                this.btn2 = document.getElementById('btn2');
+
+                this.isLive = true;
+                this.statusMessages = [
+                    'POKÉDEX OS v1.0 | STATUS: READY | CAM: ACTIVE',
+                    'TRAINER CAM ONLINE | SIGNAL: STRONG',
+                    'POKÉMON DETECTION: STANDBY',
+                    'SYSTEM: ALL FUNCTIONS NORMAL'
+                ];
+                this.currentMessageIndex = 0;
+
+                this.initializeButtons();
+                this.startStatusCycle();
+            }
+
+            initializeButtons() {
+                this.btn1.addEventListener('click', () => this.button1Action());
+                this.btn2.addEventListener('click', () => this.button2Action());
+            }
+
+            button1Action() {
+                this.updateStatus('SCANNING FOR POKÉMON...');
+                this.flashLight(this.yellowLight);
+                
+                setTimeout(() => {
+                    this.updateStatus('SCAN COMPLETE | NO WILD POKÉMON DETECTED');
+                }, 2000);
+            }
+
+            button2Action() {
+                this.updateStatus('ACCESSING TRAINER DATA...');
+                this.flashLight(this.greenLight);
+                
+                setTimeout(() => {
+                    this.updateStatus('TRAINER ID: 12345 | BADGES: 8 | POKÉMON: 150');
+                }, 2000);
+            }
+
+            flashLight(light) {
+                const originalFilter = light.style.filter;
+                light.style.filter = 'brightness(1.5)';
+                setTimeout(() => {
+                    light.style.filter = originalFilter;
+                }, 500);
+            }
+
+            updateStatus(message) {
+                this.statusDisplay.textContent = message;
+            }
+
+            setLiveStatus(isLive) {
+                this.isLive = isLive;
+                if (isLive) {
+                    this.greenLight.style.filter = 'brightness(1.2)';
+                    this.updateStatus('TRAINER CAM: ONLINE | SIGNAL: STRONG');
+                } else {
+                    this.greenLight.style.filter = 'brightness(0.5)';
+                    this.redLight.style.filter = 'brightness(1.2)';
+                    this.updateStatus('TRAINER CAM: OFFLINE | SIGNAL: LOST');
+                }
+            }
+
+            triggerExcitement() {
+                this.pokedexFrame.style.transform = 'scale(1.02)';
+                this.updateStatus('EXCITEMENT DETECTED! TRAINER ENERGY HIGH!');
+                this.flashLight(this.yellowLight);
+                
+                setTimeout(() => {
+                    this.pokedexFrame.style.transform = 'scale(1)';
+                    this.updateStatus(this.statusMessages[this.currentMessageIndex]);
+                }, 2000);
+            }
+
+            triggerCelebration() {
+                this.pokedexFrame.style.transform = 'scale(1.05)';
+                this.updateStatus('POKÉMON CAUGHT! CONGRATULATIONS TRAINER!');
+                
+                // Flash all lights in sequence
+                setTimeout(() => this.flashLight(this.redLight), 0);
+                setTimeout(() => this.flashLight(this.yellowLight), 200);
+                setTimeout(() => this.flashLight(this.greenLight), 400);
+                
+                setTimeout(() => {
+                    this.pokedexFrame.style.transform = 'scale(1)';
+                    this.updateStatus(this.statusMessages[this.currentMessageIndex]);
+                }, 3000);
+            }
+
+            startStatusCycle() {
+                setInterval(() => {
+                    // Only cycle if showing default messages
+                    if (this.statusMessages.includes(this.statusDisplay.textContent)) {
+                        this.currentMessageIndex = (this.currentMessageIndex + 1) % this.statusMessages.length;
+                        this.updateStatus(this.statusMessages[this.currentMessageIndex]);
+                    }
+                }, 6000);
+            }
+        }
+
+        // Global functions for external integration
+        window.setLiveStatus = function (isLive) {
+            if (window.classicPokedex) {
+                window.classicPokedex.setLiveStatus(isLive);
+            }
+        };
+
+        window.triggerWebcamExcitement = function () {
+            if (window.classicPokedex) {
+                window.classicPokedex.triggerExcitement();
+            }
+        };
+
+        window.triggerWebcamCelebration = function () {
+            if (window.classicPokedex) {
+                window.classicPokedex.triggerCelebration();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.classicPokedex = new ClassicPokedex();
+        });
+    </script>
+</body>
+
+</html>
