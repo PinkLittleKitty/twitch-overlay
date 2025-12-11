@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #3a3a3a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .subtle-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(168, 198, 134, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 198, 134, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            pointer-events: none;
+        }
+
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.15;
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 450px;
+            height: 450px;
+            background: #a8c686;
+            top: 10%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #00ff41;
+            bottom: 15%;
+            right: 10%;
+            animation-delay: -10s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: #f5f1e8;
+            top: 60%;
+            left: 50%;
+            animation-delay: -18s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(20px, -20px) scale(1.05);
+            }
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.08;
+            animation: drift 40s linear infinite;
+        }
+
+        .shape-circle {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #a8c686;
+            border-radius: 50%;
+        }
+
+        .shape-square {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(0, 255, 65, 0.4);
+            border-radius: 8px;
+            transform: rotate(45deg);
+        }
+
+        .code-snippet {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: rgba(0, 255, 65, 0.12);
+            white-space: nowrap;
+            animation: codeDrift 35s linear infinite;
+        }
+
+        @keyframes codeDrift {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.12;
+            }
+            90% {
+                opacity: 0.12;
+            }
+            100% {
+                transform: translateX(100vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.04;
+            }
+            90% {
+                opacity: 0.04;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="subtle-grid"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <script>
+        const codeSnippets = [
+            '$ podcast --start',
+            'function justARDPodcast() {',
+            '// Recording...',
+            'const episode = 42;',
+            'console.log("Hello!");',
+            'npm run record',
+            '} // end',
+            '$ chat --live'
+        ];
+
+        function createShape() {
+            const shape = document.createElement('div');
+            shape.className = 'floating-shape';
+            
+            const shapeType = Math.random() > 0.5 ? 'shape-circle' : 'shape-square';
+            const inner = document.createElement('div');
+            inner.className = shapeType;
+            shape.appendChild(inner);
+            
+            shape.style.left = Math.random() * 100 + '%';
+            shape.style.animationDuration = (Math.random() * 20 + 30) + 's';
+            shape.style.animationDelay = Math.random() * 5 + 's';
+            
+            document.body.appendChild(shape);
+            
+            setTimeout(() => shape.remove(), 50000);
+        }
+
+        function createCodeSnippet() {
+            const snippet = document.createElement('div');
+            snippet.className = 'code-snippet';
+            snippet.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+            snippet.style.top = Math.random() * 100 + '%';
+            snippet.style.animationDuration = (Math.random() * 15 + 30) + 's';
+            
+            document.body.appendChild(snippet);
+            
+            setTimeout(() => snippet.remove(), 40000);
+        }
+
+        for (let i = 0; i < 6; i++) {
+            setTimeout(() => createShape(), i * 4000);
+        }
+
+        for (let i = 0; i < 4; i++) {
+            setTimeout(() => createCodeSnippet(), i * 6000);
+        }
+
+        setInterval(() => {
+            if (Math.random() < 0.2) createShape();
+        }, 12000);
+
+        setInterval(() => {
+            if (Math.random() < 0.25) createCodeSnippet();
+        }, 10000);
+    </script>
+</body>
+</html>

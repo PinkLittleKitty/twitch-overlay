@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Frame - Animal Crossing Style</title>
+    <title>Webcam Frame - Dark Terminal Style</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -27,13 +27,13 @@
             width: 320px;
             height: 240px;
             background: transparent;
-            border-radius: 30px;
+            border-radius: 0;
             position: relative;
             box-shadow:
-                0 12px 40px rgba(0, 0, 0, 0.15),
-                inset 0 2px 0 rgba(255, 255, 255, 0.3);
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                inset 0 2px 0 rgba(0, 255, 65, 0.1);
             padding: 15px;
-            border: 15px solid #f5f1e8;
+            border: 15px solid #2d2d2d;
             pointer-events: none;
         }
 
@@ -41,26 +41,12 @@
             width: 100%;
             height: 100%;
             background: transparent;
-            border-radius: 20px;
+            border-radius: 0;
             position: relative;
             overflow: hidden;
-            border: none;
-            box-shadow: none;
+            border: 2px solid rgba(0, 255, 65, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.05);
         }
-
-        .webcam-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #a8c686;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 10;
-            text-align: center;
-        }
-
-
 
         .status-indicator {
             position: absolute;
@@ -69,18 +55,18 @@
             width: 8px;
             height: 8px;
             background: #ec7063;
-            border-radius: 50%;
+            border-radius: 0;
             z-index: 10;
             box-shadow:
                 0 2px 4px rgba(236, 112, 99, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                0 0 10px rgba(236, 112, 99, 0.5);
         }
 
         .status-indicator.live {
-            background: #58d68d;
+            background: #00ff41;
             box-shadow:
-                0 2px 4px rgba(88, 214, 141, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                0 2px 4px rgba(0, 255, 65, 0.3),
+                0 0 10px rgba(0, 255, 65, 0.6);
         }
     </style>
 </head>
@@ -96,14 +82,10 @@
             constructor() {
                 this.webcamFrame = document.getElementById('webcamFrame');
                 this.statusIndicator = document.getElementById('statusIndicator');
-
                 this.isLive = true;
                 this.currentMood = 'normal';
-
                 this.startEffects();
             }
-
-
 
             setLiveStatus(isLive) {
                 this.isLive = isLive;
@@ -115,7 +97,6 @@
             }
 
             triggerExcitement() {
-                // Simple effect - just a subtle scale
                 this.webcamFrame.style.transform = 'scale(1.02)';
                 setTimeout(() => {
                     this.webcamFrame.style.transform = 'scale(1)';
@@ -123,7 +104,6 @@
             }
 
             triggerCelebration() {
-                // Simple celebration effect
                 this.webcamFrame.style.transform = 'scale(1.05)';
                 setTimeout(() => {
                     this.webcamFrame.style.transform = 'scale(1)';
@@ -131,11 +111,8 @@
             }
 
             startEffects() {
-                // Simple, clean - no random effects
             }
         }
-
-        // Global functions for external integration
 
         window.setLiveStatus = function (isLive) {
             if (window.webcamFrame) {
